@@ -1,0 +1,33 @@
+<script>
+(function() {
+    var doc = document,
+        head = doc.head || doc.getElementsByTagName('head')[0],
+        body = doc.body || doc.getElementsByTagName('body')[0];
+    window.appendScripts = function (srcs) {
+        srcs = srcs || [];
+        srcs.forEach(function(src) {
+            if (src && src !== '') {
+                var scriptElement = doc.createElement('script');
+                scriptElement.type = 'text/javascript';
+                scriptElement.async = true;
+                scriptElement.src = src;
+                body.appendChild(scriptElement);
+            }
+        });
+    };
+    window.appendStylesheets = function (srcs) {
+        srcs = srcs || [];
+        srcs.forEach(function(src) {
+            if (src && src !== '') {
+                var linkElement = doc.createElement('link');
+                linkElement.type = 'text/css';
+                linkElement.rel = 'stylesheet';
+                linkElement.href = src;
+                head.appendChild(scriptElement);
+            }
+        });
+    };
+    appendScripts(scripts);
+    appendStylesheets(stylesheets);
+}());
+</script>

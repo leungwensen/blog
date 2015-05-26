@@ -1,0 +1,10 @@
+<script type="text/javascript" src="<%- config.root %>pastry/0.3.20150525/pastry.ui.min.js"></script>
+<%- partial('helpers') %>
+<% if (config.disqus_shortname){ %>
+<script type="text/javascript">
+    var disqus_shortname = '<%= config.disqus_shortname %>';
+    appendScripts([
+        '//' + disqus_shortname + '.disqus.com/<% if (page.comments){ %>embed.js<% } else { %>count.js<% } %>'
+    ]);
+</script>
+<% } %>

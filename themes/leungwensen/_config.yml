@@ -1,0 +1,14 @@
+menu:
+  Home: 
+  Archives: /archives
+
+widgets:
+- search
+- category
+- tag
+
+language: zh-CN
+
+excerpt_link: Read More
+
+rss:

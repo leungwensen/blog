@@ -1,0 +1,10 @@
+<%
+    var currentScripts = item.scripts || '';
+    var currentStylesheets = item.stylesheets || '';
+%>
+<script>
+(function() {
+    scripts = scripts.concat('<%-currentScripts%>'.split(/\s+/));
+    stylesheets = stylesheets.concat('<%-currentStylesheets%>'.split(/\s+/));
+}());
+</script>
