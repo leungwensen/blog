@@ -1,1 +1,0 @@
-/*! pastry - v0.3.20150525 */define("pastry/locale/en_us",[],function(){"use strict";return{}});
