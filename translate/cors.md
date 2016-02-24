@@ -481,7 +481,10 @@ Chrome插件有两种不同的方法支持跨域请求：
 
 ## CORS服务器流程图
 
-下面的流程图展示了服务器添加CORS响应头信息的决策过程。点击图片查看大图。
+下面的流程图展示了服务器添加CORS响应头信息的决策过程。点击链接查看大图[^footnote-3]。
+
+[原图链接](http://www.html5rocks.com/static/images/cors_server_flowchart.png)
+
 
 CORS服务器流程图
 
@@ -528,51 +531,22 @@ op6=>operation: 设置
 Access-Control-Allow-Credentials
 响应头
 
-cond1(no, right)->e1
-cond1(yes, bottom)->cond2
-cond2(no, left)->sub1
-cond2(yes, bottom)->cond3
-cond3(no, left)->sub1(bottom)->cond4(yes, bottom)->op1(bottom)->op5(bottom)->cond8
-cond3(yes, right)->sub2(bottom)->cond5
-cond5(no, right)->e2
-cond5(yes, bottom)->cond6
-cond6(yes, right)->cond7
-cond6(no, bottom)->op2
-cond7(no, top)->e2
-cond7(yes, bottom)->op2(bottom)->op3(bottom)->op4(bottom)->op5
-cond8(yes, right)->op6(bottom)->cond9
-cond8(no, bottom)->cond9
-cond9(yes, right)->e3
-cond9(no, bottom)->e4
-```
-
-```graph-TB
-cond1{请求是否有Origin头?}-->|no|e1(非法CORS请求)
-```
-
-```
-cond1(yes, bottom)->cond2
-cond2(no, left)->sub1
-cond2(yes, bottom)->cond3
-cond3(no, left)->sub1(bottom)->cond4(yes, bottom)->op1(bottom)->op5(bottom)->cond8
-cond3(yes, right)->sub2(bottom)->cond5
-cond5(no, right)->e2
-cond5(yes, bottom)->cond6
-cond6(yes, right)->cond7
-cond6(no, bottom)->op2
-cond7(no, top)->e2
-cond7(yes, bottom)->op2(bottom)->op3(bottom)->op4(bottom)->op5
-cond8(yes, right)->op6(bottom)->cond9
-cond8(no, bottom)->cond9
-cond9(yes, right)->e3
-cond9(no, bottom)->e4
-
-```
-
-```html-
-<a href="http://www.html5rocks.com/static/images/cors_server_flowchart.png" target="_blank">
-    <image height="600" src="http://www.html5rocks.com/static/images/cors_server_flowchart.png"></image>
-</a>
+cond1(no)->e1
+cond1(yes)->cond2
+cond2(no)->sub1
+cond2(yes)->cond3
+cond3(no)->sub1(bottom)->cond4(yes)->op1(bottom)->op5(bottom)->cond8
+cond3(yes)->sub2(bottom)->cond5
+cond5(no)->e2
+cond5(yes)->cond6
+cond6(yes)->cond7
+cond6(no)->op2
+cond7(no)->e2
+cond7(yes)->op2(bottom)->op3(bottom)->op4(bottom)->op5
+cond8(yes)->op6(bottom)->cond9
+cond8(no)->cond9
+cond9(yes)->e3
+cond9(no)->e4
 ```
 
 ## CORS和图片
@@ -601,6 +575,7 @@ MDN上面有相关的实现细节：[CORS-enabled Image](https://developer.mozil
 
 [^footnote-1]: 浏览器中的js对象，已被W3C组织标准化。用于与服务器进行通信，是web2.0的核心－[ajax技术][ajax]的基础。
 [^footnote-2]: 译者注：W3C的标准里只对简单跨域请求作出定义，凡是不符合简单请求定义的跨域请求都是“默认的”、“普通的”请求。
+[^footnote-3]: 译者注：这里是用[flowchart.js](https://github.com/adrai/flowchart.js)的语法写的图，和原图结构有差异，但逻辑一致。
 
 [ajax]: https://en.wikipedia.org/wiki/Ajax_(programming)
 
