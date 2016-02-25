@@ -1,0 +1,38 @@
+{
+    "name": "leungwensen-blog",
+    "title": "leungwensen's blog",
+    "description": "leungwensen's blog",
+    "homepage": "http://blog.leungwensen.com/",
+    "version": "0.0.20160225",
+    "author": {
+        "description": "leungwensen@gmail.com",
+        "url": "http://leungwensen.com"
+    },
+    "bugs": {
+        "url": "https://github.com/leungwensen/blog/issues"
+    },
+    "dependencies": {
+        "zero-colors": "0.0.20151202",
+        "zero-crypto": "0.0.20151202",
+        "zero-dom": "0.0.20160220",
+        "zero-fmt": "0.0.20151202",
+        "zero-lang": "0.0.20151202",
+        "zero-oop": "0.0.20151202"
+    },
+    "devDependencies" : {
+        "browserify": "13.0.0"
+    },
+    "engines" : {
+        "node": ">=0.8.0"
+    },
+    "keywords": [
+        "blog"
+    ],
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:leungwensen/blog.git"
+    },
+    "scripts": {
+    }
+}

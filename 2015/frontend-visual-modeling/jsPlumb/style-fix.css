@@ -1,0 +1,8 @@
+li {
+  list-style-type: inherit;
+}
+
+a, a:visited {
+  color: #4078c0;
+  text-decoration: none;
+}

@@ -1,0 +1,33 @@
+/*visualizeID3*/
+
+#visualize-id3 {
+    width: 910px;
+    margin: 0 auto;
+    -webkit-user-select: none; /* Chrome all / Safari all */
+    -moz-user-select: none; /* Firefox all */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Likely future */
+}
+
+#visualize-id3 .menu-list {
+    list-style: none;
+    padding-left: 0;
+    cursor: pointer;
+}
+
+#visualize-id3 .menu-item {
+    list-style: none;
+    display: inline-block;
+}
+#visualize-id3 .menu-link {
+    padding: .5em 1em;
+}
+#visualize-id3 canvas {
+    border: 1px solid #f7f7f7;
+    cursor: crosshair;
+}
+
+#visualize-id3 svg {
+    background-color: #f7f7f7;
+    cursor: move;
+}
