@@ -91,6 +91,10 @@
 }
 ```
 
+```js-
+require = define = undefined;
+```
+
 ### mxGraph
 
 这个商业产品是上述提到的可视化建模产品里最强大的一个。从05年立项至今，这个库开发时间已有十年。而它的前身JGraph立项时间更早，是2000年。虽然开发模式落后（还是绑定全局变量的方式）、体积庞大，但mxGraph的设计、功能、文档各个方面都难以挑剔。前端可视化建模的标杆作品[draw.io][draw-io]以及中文作图社区[ProcessOn][process-on]都是基于这个库的。基本上目前mxGraph能做到的，就是前端可视化建模能做到的。
@@ -110,7 +114,7 @@ var mxBasePath = '../lib/mxGraph';
 ./frontend-visual-modeling/mxGraph/folding.js
 ```
 
-代码：[folding.js](./frontend-visual-modeling/mxGraph/js/folding.js)
+代码：[folding.js](./frontend-visual-modeling/mxGraph/folding.js)
 
 ### Joint
 
@@ -181,44 +185,6 @@ jsPlumb采用的是svg和html混排的做法，把所有节点都是html，所�
 
 这个建模工具只建议在技术栈为YUI、并且建模需求简单时选用。Alloy-UI的设计和jsPlumb差不多，都是svg和html混排的形式。
 
-demo:
-
-```css-
-#diagramBuilder.demo {
-  height: 480px !important;
-  margin-bottom: 20px;
-}
-.property-builder-drop-container:first-child {
-  height: 460px !important;
-}
-```
-
-```html+
-<div id="diagramBuilder" class="demo"></div>
-```
-
-```link+
-../lib/aui/aui-css/css/bootstrap.aui.css
-```
-
-```css-
-#diagramBuilder.component:hover {
-  box-shadow: none;
-  -o-box-shadow: none;
-  -moz-box-shadow: none;
-}
-.property-builder-content-container {
-  height: auto !important;
-}
-```
-
-```script+
-../lib/aui/aui/aui.js
-./frontend-visual-modeling/aui/diagram-builder.js
-```
-
-代码：[diagram-builder.js](./frontend-visual-modeling/aui/diagram-builder.js)
-
 ## 总结
 
 ### 常用前端可视化建模工具对比
@@ -234,7 +200,7 @@ demo:
 ```
 
 ```script-
-../lib/echarts/echarts-all.js
+../lib/echarts/echarts.min.js
 ./frontend-visual-modeling/radar.js
 ```
 
