@@ -13,6 +13,12 @@
 * [使用CORS(译文)](./2015/cors.md)
 * [决策树算法](./2015/decision-tree.md)
 * [前端可视化建模技术概览](./2015/frontend-visual-modeling.md)
+* [自制编译器(译本)](./2015/lets-make-a-compiler.md)
+* [图解简单算法(译本)](./2015/an-illustrated-brief-introduction-to-algorithm.md)
+
+### 2014
+
+* [像外行一样思考，像专家一样实践(修订版)(译本)](./2014/think-like-a-rookie-while-practice-like-a-pro.md)
 
 ## 本地查看
 
