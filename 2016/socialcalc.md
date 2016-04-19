@@ -350,7 +350,83 @@ $(hpipe).bind("message.execute", function (e, d) {
 
 ### 19.7.2. 解决冲突
 
-第一个是命令执行时的竞争条件：如果用户A
+第一个是命令执行时的竞争条件：如果用户A和用户B同时对同一个单元格进行操作，然后接收到并执行来自对方广播的命令，那么他们最终电子表格里的状态会不一致，如图19.18。
+
+![图19.18：竞争条件冲突](./socialcalc/collab-conflict.png)
+
+这个问题可以利用SocialCalc内置的撤销／重做机制来解决，如图19.19。
+
+![图19.19：竞争条件冲突解决方案](./socialcalc/collab-resolution.png)
+
+解决冲突的流程如下。当客户端广播一个命令时，它会把命令加到等待队列。当客户端接收到远程命令时，它会去等待队列里检查。
+
+如果等待队列是空的，那么只需要执行远程命令即可。如果远程命令和等待队列中的命令匹配，那么本地的命令会被移除。
+
+此外，客户端还会检查命令队列里是否存在和接收命令冲突的命令。如果有，客户端会首先撤销这些命令，并且标记这些指令“稍后重做”。等撤销完冲突命令后，远程命令照常执行。
+
+当从服务器接收到“稍后重做”的命令时，客户端会再次执行这些命令，并且把它们从队列中移除。
+
+### 19.7.3. 远程光标
+
+即便解决了竞争条件冲突的问题，我们还是不推荐去更改别人正在编辑的单元格。一个简单的改进方案是，把每一个客户端当前的光标位置广播出去，从而可以通知所有用户当前那些单元格正在被编辑。
+
+为实现这个方案，我们为`MoveECellCallback`事件添加了一个`broadcast`：
+
+```javascript
+editor.MoveECellCallback.broadcast = function(e) {
+    hpipe.send({
+        type: 'ecell',
+        data: e.ecell.coord
+    });
+};
+
+$(hpipe).bind("message.ecell", function (e, d) {
+    var cr = SocialCalc.coordToCr(d.data);
+    var cell = SocialCalc.GetEditorCellElement(editor, cr.row, cr.col);
+    // …为远程用户制定单元格样式…
+});
+```
+
+要在电子表格中突出某个单元格，常用的方法是使用带颜色的边框。不过某个单元格也许已经定义了`border`属性，又因为`border`是单色的，因此每次只能在同一个单元格是展示一个光标。
+
+因此，在支持CSS3的浏览器中，我们使用`border-shadow`属性来在同一个单元格显示多个光标：
+
+```javascript
+/* 同一个单元格有两个光标 */
+box-shadow: inset 0 0 0 4px red, inset 0 0 0 2px green;
+```
+
+图19.20显示了如果有四个人同时编辑同一个电子表格时的屏幕外观。
+
+![图19.20：四个人同时编辑一个电子表格](./socialcalc/collab-borders.png)
+
+## 19.8. 收获
+
+SocialCalc 1.0版本在2009年10月19日发布，刚好是VisiCalc初始发行的30周年。在Dan Bricklin的指导下和在SocialCalc的同事合作开发的经历对我而言非常宝贵，我也想和大家分享一下那段时间我的收获。
+
+### 19.8.1. 有清晰愿景的主设计师
+
+在The Design of Design[^the-design-of-design]一文中，Fred Brooks指出，在构建复杂系统时，如果我们能专注于连贯的设计理念，那么信息互通可以更流畅，而不会产生分歧。据Brooks的观点，这样连贯的设计理念最好是掌握在某个人心中：
+
+> 因为概念完整性是一个伟大设计中最重要的因素，而这通常只源自于某个或者少数头脑，因此英明的管理者会大胆把每个设计任务放任给某个有天分的主设计师。
+
+SocialCalc的情况正是如此，我们的主用户体验设计师Tracy Ruggles正是项目能趋近一个共同愿景的关键所在。SocialCalc底层引擎具备相当可观的延展性，堆叠功能的诱惑无处不在。Tracy的利用设计草图沟通的能力最终帮助我们把特性更直观地呈现给用户。
+
+### 19.8.2. 利用wiki助长项目延续性
+
+我加入SocialCalc项目时，整个项目已经经历了两年的持续设计和开发，而我之所以能在短短一个星期内就能跟上节奏开始贡献代码，就是因为所有信息都在wiki里。从最早的设计笔记，到最新近的浏览器支持模型，整个进程都被积累在wiki页面和SocialCalc电子表格里。
+
+通过阅读项目工作空间的内容，我快速跟上了我的同事们，而没有通常意义上指导和定向新成员的额外开销。
+
+在传统的开源项目中，这几乎是不可能的。传统的开源项目通常使用IRC和邮件列表来沟通，而wiki（如果有的话）仅仅用于保存文档或者开发资源链接。对新人而言，从非结构化的IRC日志或者邮件存档里是很难去还原上下文的。
+
+### 19.8.3. 拥抱时区差异
+
+Ruby on Rails的创始人David Heinemeier Hansson在加入37signals时曾这么指出分布式开发团队的好处：“Copenhagen和Chicago之间7个时区的差异意味着我们可以在非中断的情况下做得更多。”台北[^taipei]和Palo Alto之间有着9个时区的差异，在SocialCalc的开发过程中，我对此深有同感。
+
+我们通常能在一天24小时内完成整个设计、开发、QA反馈的流程。每方面会占去某个人8小时的工作。这种异步协作的方式迫使我们产出自描述的成果（设计草稿、代码和测试等），反过来又极大地提高了成员彼此间的信任。
+
+### 19.8.4. 
 
 ## 文档信息
 
@@ -378,4 +454,7 @@ $(hpipe).bind("message.execute", function (e, d) {
 [^]: http://www.fsf.org
 [^]: https://github.com/facebook/platform
 [^]: https://github.com/reddit/reddit
+[^the-design-of-design]: Frederick P. Brooks, Jr.: The Design of Design: Essays from a Computer Scientist. Pearson Education, 2010.
+[^taipei]: 作者唐凤是台湾著名独立开发者
+[^optimizing-for-fun]: Audrey Tang: "–O fun: Optimizing for Fun". http://www.slideshare.net/autang/ofun-optimizing-for-fun, 2006.
 
