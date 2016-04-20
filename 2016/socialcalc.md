@@ -50,15 +50,15 @@ WikiCalc 1.0的内部架构(图19.2)以及消息流(图19.3)故意设计得非�
 
 因为存在这些问题，WikiCalc虽然作为单机服务器运行在本地时非常有用，但要作为基于网络的内容管理系统就显得不切实际了。
 
-2006年，Dan Bricklin和[Socialtext](https://en.wikipedia.org/wiki/Socialtext)合作，基于某些WikiCalc原来的Perl代码，用Javascript完全重写这个系统，也就是[SocialCalc](https://github.com/DanBricklin/socialcalc)这个项目。
+2006年，Dan Bricklin和[Socialtext](https://en.wikipedia.org/wiki/Socialtext)合作，基于某些WikiCalc原来的Perl代码，用JavaScript完全重写这个系统，也就是[SocialCalc](https://github.com/DanBricklin/socialcalc)这个项目。
 
 这次重写旨在提供大规模、分布式的协作方案，并尽力提供接近桌面应用的外观和体验。其它的设计目标包括：
 
 * 能处理成千上万的单元格
 * 快速的编辑响应
 * 基于客户端的编辑记录跟踪和撤销／重做栈
-* 更好地利用Javascript和CSS以提供成熟的布局功能
-* 更广泛应用Javascript的同时提供跨浏览器支持
+* 更好地利用JavaScript和CSS以提供成熟的布局功能
+* 更广泛应用JavaScript的同时提供跨浏览器支持
 
 经过3年的开发和几次测试版本发布，Socialtext在2009年发布了SocialCalc 1.0，达成了所有设计目标。下面我们看看SocialCalc系统的架构。
 
@@ -66,11 +66,11 @@ WikiCalc 1.0的内部架构(图19.2)以及消息流(图19.3)故意设计得非�
 
 ![图19.5](./socialcalc/socialcalc-screenshot.png)
 
-图19.5和图19.6分别展示了SocialCalc的界面和类图。相比起WikiCalc，起服务器的角色大为削弱。服务器的职责只剩下响应HTTP GET请求，以序列化保存的格式返回整个电子表格，一旦浏览器拿到数据，所有的计算、变更跟踪、用户交互都交由Javascript接管。
+图19.5和图19.6分别展示了SocialCalc的界面和类图。相比起WikiCalc，起服务器的角色大为削弱。服务器的职责只剩下响应HTTP GET请求，以序列化保存的格式返回整个电子表格，一旦浏览器拿到数据，所有的计算、变更跟踪、用户交互都交由JavaScript接管。
 
 ![图19.6](./socialcalc/socialcalc-class-diagram.png)
 
-这些Javascript组件依照MVC(Model/View/Controller)风格进行分层，每个类都只专注于单个方面：
+这些JavaScript组件依照MVC(Model/View/Controller)风格进行分层，每个类都只专注于单个方面：
 
 * Sheet是数据模型，是电子表格在内存中的数据结构映射。其中包括一个由坐标指向Cell对象的字典，用于表示每一个单元格。空单元格没有对应的实例，也就不占用任何内存
 * Cell表示每个单元格的内容和格式。表19.1展示了一些常用的属性。
@@ -253,7 +253,7 @@ if (SocialCalc.Callbacks.expand_wiki && /^text-wiki/.test(valueformat)) {
 
 ### 19.6.2 渲染Wikitext
 
-下一步，我们用Wikiwyg[^wikiwyg]，一个Javascript库来实现wikitext和HTML之间的转换。
+下一步，我们用Wikiwyg[^wikiwyg]，一个JavaScript库来实现wikitext和HTML之间的转换。
 
 我们定义`expand_wiki`函数，取出单元格中的文本，并传入Wikiwyg的wikitext解释器和HTML发射器：
 

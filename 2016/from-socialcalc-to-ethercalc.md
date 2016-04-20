@@ -3,9 +3,9 @@
 
 [EtherCalc](https://ethercalc.net/)是一个在线电子表格系统，它专注于在线协作编辑，使用SocialCalc作为浏览器端的电子表格引擎。SocialCalc由Dan Bricklin（电子表格的发明人）设计，是Socialtext平台的一部分。Socialtext是面向商业用户的协同工作平台。
 
-对Socialtext团队而言，2006年开发SocialCalc的主要目标是性能。主要的考虑是，虽然客户端的Javascript运算会比服务器端的Perl运算慢一个量级，但总体而言所消耗的时间会比AJAX往返所需的网络延迟要少得多。
+对Socialtext团队而言，2006年开发SocialCalc的主要目标是性能。主要的考虑是，虽然客户端的JavaScript运算会比服务器端的Perl运算慢一个量级，但总体而言所消耗的时间会比AJAX往返所需的网络延迟要少得多。
 
-![图2.1 WikiCalc和SocialCalc的性能模型。自2009年起，Javascript运行时的改进已经把50毫秒降到了10毫秒以下](./from-socialcalc-to-ethercalc/wikicalc-socialcalc.png)
+![图2.1 WikiCalc和SocialCalc的性能模型。自2009年起，JavaScript运行时的改进已经把50毫秒降到了10毫秒以下](./from-socialcalc-to-ethercalc/wikicalc-socialcalc.png)
 
 SocialCalc把所有运算都放到浏览器上进行，服务器存在的意义仅仅是加载和保存电子表格。在[开源应用架构](http://aosabook.org/en/index.html)最后一章的[SocialCalc](http://blog.leungwensen.com/2016/socialcalc.md)部分，我们介绍了如何基于简单的、类聊天室的架构来实现电子表格的多人协作编辑。
 
@@ -32,7 +32,7 @@ Socialtext平台同时有着带防火墙部署和云端部署的特性，这使�
 
 ### CPU
 
-遵循SocialCalc的原始设计，我们把大部分的运算和内容渲染都移交客户端Javascript。
+遵循SocialCalc的原始设计，我们把大部分的运算和内容渲染都移交客户端JavaScript。
 
 ### 网络
 
@@ -41,7 +41,7 @@ Socialtext平台同时有着带防火墙部署和云端部署的特性，这使�
 
 ## 最初原型
 
-一开始我们通过[Feersum](https://metacpan.org/release/Feersum)用Perl 5实现了一个WebSocket服务器。Freesum是Socialtext开发的一个基于[libev](http://software.schmorp.de/pkg/libev.html)的非阻塞网络服务器。它非常快，能用单个CPU提供10,000连接每秒的并发能力。在Freesum上，我们使用[PocketIO](https://metacpan.org/release/PocketIO)中间件来响应Javascript的Socket.io客户端。Socket.io能在不支持WebSocket的浏览器上提供向后兼容。
+一开始我们通过[Feersum](https://metacpan.org/release/Feersum)用Perl 5实现了一个WebSocket服务器。Freesum是Socialtext开发的一个基于[libev](http://software.schmorp.de/pkg/libev.html)的非阻塞网络服务器。它非常快，能用单个CPU提供10,000连接每秒的并发能力。在Freesum上，我们使用[PocketIO](https://metacpan.org/release/PocketIO)中间件来响应JavaScript的Socket.io客户端。Socket.io能在不支持WebSocket的浏览器上提供向后兼容。
 
 最初的原型酷似聊天服务器。每一个协作会话都是一个聊天室，客户端会把本地执行的命令和光标位置移动发送到服务器，服务器会把这些信息同步到同一个聊天室里的所有客户端。
 
@@ -55,7 +55,7 @@ Socialtext平台同时有着带防火墙部署和云端部署的特性，这使�
 
 聪明的读者这时应该能看出来，这两个问题都是因为服务器无法执行电子表格命令造成的。如果服务器能根据接收到的命令更新自己的状态，那它甚至不需要维护一个命令的日志备份。
 
-浏览器中的SocialCalc引擎是用Javascript编写的，我们曾尝试把这套逻辑转译到Perl中去，但这样做会带来维护两份代码的成本。我们也尝试过嵌入JS引擎（[V8](https://metacpan.org/release/JavaScript-V8)，[SpiderMonkey](https://metacpan.org/release/JavaScript-SpiderMonkey)），但在Feersum的事件循环之上运行时，会带来新的性能问题。
+浏览器中的SocialCalc引擎是用JavaScript编写的，我们曾尝试把这套逻辑转译到Perl中去，但这样做会带来维护两份代码的成本。我们也尝试过嵌入JS引擎（[V8](https://metacpan.org/release/JavaScript-V8)，[SpiderMonkey](https://metacpan.org/release/JavaScript-SpiderMonkey)），但在Feersum的事件循环之上运行时，会带来新的性能问题。
 
 最终，在2011年8月，我们决定用Node.js重写服务器。
 
@@ -65,7 +65,7 @@ Socialtext平台同时有着带防火墙部署和云端部署的特性，这使�
 
 最初的[微型性能评估](http://c9s.github.com/BenchmarkTest/)显示，移植到Node.js后我们大约损失了最大吞吐量的一半。在2011年一个典型的因特尔i5内核CPU上，原来基于Feersum的方案每秒能处理5000个请求，而Node.js的Express每秒最多只能处理2800个。
 
-这个性能损失在第一版Javascript实现上我们是可以接受的，因为这个方案并不会很显著地提高用户操作延迟，并且我们确信它的性能会随着时间推移而上升。
+这个性能损失在第一版JavaScript实现上我们是可以接受的，因为这个方案并不会很显著地提高用户操作延迟，并且我们确信它的性能会随着时间推移而上升。
 
 接下来，我们继续减少客户端的CPU占用，并且通过用服务器版本的SocialCalc电子表格跟踪每个会话的状态来最小化带宽占用。
 
@@ -74,7 +74,7 @@ Socialtext平台同时有着带防火墙部署和云端部署的特性，这使�
 
 ## 服务器版的SocialCalc
 
-解决问题的关键技术是[jsdom](https://github.com/tmpvar/jsdom)，一个W3C文档对象模型的完全实现，它令Node.js可以在模拟的浏览器环境中加载客户端Javascript库。
+解决问题的关键技术是[jsdom](https://github.com/tmpvar/jsdom)，一个W3C文档对象模型的完全实现，它令Node.js可以在模拟的浏览器环境中加载客户端JavaScript库。
 
 使用了jsdom之后，我们可以随意创建任意数目的服务器端SocialCalc电子表格，每个表格隔离在单独的沙盒里，只占去大约30KB的内存：
 
@@ -197,41 +197,41 @@ Fred Brooks在他的著作*《设计原本》*中说到，约束可以压缩设�
 
 举个例子，一个看上去可行的方案是，我们可以为三种服务器类型（带防火墙，云端，多租户托管）实现三种不同的并发架构。然而，这样的过早优化会严重影响系统的概念完整性。
 
-相反，我专注于让EtherCalc可以在各种资源需求下都能有不错的性能。因此较少CPU占用、降低内存占用和带宽占用是同时进行的。带来的结果就是，因为内存占用在100MB以下，我们甚至可以在类似Raspberry Pi这样的嵌入式平台下部署EtherCalc。
+相反，我专注于让EtherCalc可以在各种资源需求下都能有不错的性能。因此优化CPU使用、降低内存占用和减少带宽占用是同时进行的。带来的结果就是，因为内存占用在100MB以下，我们甚至可以在类似Raspberry Pi这样的嵌入式平台下部署EtherCalc。
 
-这个人造的约束最终使得EtherCalc可以部署在所有三种资源都受限制的PaaS环境下（譬如DotCloud，Nodejitsu和Heroku）。人们甚至可以很容易搭建一个个人的电子表格服务，从而鼓励了更多来自独立集成商的参与贡献。
+这个人为约束最终使得EtherCalc可以部署在所有三种资源都受限制的PaaS环境下（譬如DotCloud，Nodejitsu和Heroku）。人们甚至可以很容易搭建一个个人的电子表格服务，从而鼓励了更多独立集成商参与贡献。
 
 ### 最差的就是最好的
 
 在2006年芝加哥的YAPC::NA会议上，我受邀对开源世界的前景作出预测，这是我的[分享](http://pugs.blogs.com/pugs/2006/06/my_yapcna_light.html)：
 
-> 我不能证明这一点，但我觉得明年Javascript 2.0就可以实现自举，完成自托管，编译成Javascript 1，并且取代Ruby成为所有环境下的下一匹黑马。
+> 我不能证明这一点，但我觉得明年JavaScript 2.0就可以实现自举，完成自托管，编译成JavaScript 1，并且取代Ruby成为所有环境下的下一匹黑马。
 
-> 我觉得CPAN和JSAN将会合并，Javascript会成为所有动态语言通用的后端，这样你可以写Perl代码，然后在浏览器执行，在服务器运行，在数据库里运行，而只需要准备一套开发工具。
+> 我觉得CPAN和JSAN将会合并，JavaScript会成为所有动态语言通用的后端，这样你可以写Perl代码，然后在浏览器执行，在服务器运行，在数据库里运行，而只需要准备一套开发工具。
 
 > 因为，我们都知道，*更差的就是更好的*，因此*最差的*脚本语言注定成为*最好*的。
 
-这个观点在2009年附近随着接近机器指令速度的Javascript引擎的到来而变为现实。在编写本文时，Javascript已经成为一个“*一次编写，到处运行*”的虚拟机－所有其它的主流语言都可以编译成Javascript，并且[几乎没有性能损耗](http://asmjs.org/)。
+这个观点在2009年附近随着接近机器指令速度的JavaScript引擎的到来而变为现实。在编写本文时，JavaScript已经成为一个“*一次编写，到处运行*”的虚拟机－所有其它的主流语言都可以编译成JavaScript，并且[几乎没有性能损耗](http://asmjs.org/)。
 
-除了客户端有浏览器、服务器端有Node.js，Javascript还在[进军](http://pgre.st/)Postgres数据库，享用着数目巨大的可以在所有这些运行环境中重用的[模块仓库](https://npmjs.org/)。
+除了客户端有浏览器、服务器端有Node.js，JavaScript还在[进军](http://pgre.st/)Postgres数据库，享用着数目巨大的可以在所有这些运行环境中重用的[模块仓库](https://npmjs.org/)。
 
-是什么使得社区成长如此迅猛？从EtherCalc的开发过程中，从初始阶段开始参与NPM社区的过程中的经验来看，我猜想恰恰是因为Javascript约束很少，并且可以为不同的使用目的定制语言，从而让创新者可以专注于方言和工具本身（譬如jQuery和Node.js），每个团队都可以从一个通用的语言核心中抽象出他们自己的*语言精髓*。
+是什么使得社区成长如此迅猛？从EtherCalc的开发过程中，从初始阶段开始参与NPM社区的过程中的经验来看，我猜想恰恰是因为JavaScript约束很少，并且可以为不同的使用目的定制语言，从而让创新者可以专注于方言和工具本身（譬如jQuery和Node.js），每个团队都可以从一个通用的语言核心中抽象出他们自己的*语言精髓*。
 
-新用户可以从一个非常精炼的自己入手，经验丰富的开发者则可以挑战已有系统的更好实现。Javascript的草根开发方式并不依赖某个核心设计团队为大家设计好完整的语言层面的方案来满足所有可预期的需求，而用实际行动践行着Richard P. Gabriel著名的“[更差的就是更好的]”这句格言。
+新用户可以从一个非常精炼的自己入手，经验丰富的开发者则可以挑战已有系统的更好实现。JavaScript的草根开发方式并不依赖某个核心设计团队为大家设计好完整的语言层面的方案来满足所有可预期的需求，而用实际行动践行着Richard P. Gabriel著名的“[更差的就是更好的]”这句格言。
 
 ### LiveScript，趋于极致
 
 相比起Perl风格的[Coro::AnyEvent](https://metacpan.org/module/Coro::AnyEvent)，基于回调的Node.js API依赖深层回调，从而难以复用。
 
-在尝试了几个流控制库之后，我最终通过选用[LiveScript](http://livescript.net/)解决了这个问题。它是一门新的、编译到Javascript的语言，其语法深受Haskell和Perl的启发。
+在尝试了几个流控制库之后，我最终通过选用[LiveScript](http://livescript.net/)解决了这个问题。它是一门新的、编译到JavaScript的语言，其语法深受Haskell和Perl的启发。
 
-事实上EtherCalc的实现带有4门语言的血统：Javascript, CoffeeScript, Coco和LiveScript。每次迭代都带来更强的表现力，非常感谢[js2coffee](http://js2coffee.org/)和[js2ls](http://js2ls.org/)项目为我们维护充分的向前和向后兼容性。
+事实上EtherCalc的实现带有4门语言的血统：JavaScript, CoffeeScript, Coco和LiveScript。每次迭代都带来更强的表现力，非常感谢[js2coffee](http://js2coffee.org/)和[js2ls](http://js2ls.org/)项目为我们维护充分的向前和向后兼容性。
 
-因为LiveScript并不会解释成自己的二进制代码，而是编译成Javascript，它对支持函数作用域的性能探查工具很友好。它产生的代码和手写的Javascript一样强大，可以充分利用现代的原生Javascript运行时。
+因为LiveScript并不会解释成自己的二进制代码，而是编译成JavaScript，它对支持函数作用域的性能探查工具很友好。它产生的代码和手写的JavaScript一样强大，可以充分利用现代的原生JavaScript运行时。
 
 在语法上，LiveScript用小说的结构替代回调，譬如[backcalls](http://livescript.net/#backcalls)和[cascades](http://livescript.net/#cascades)。它还从语法上提供了书写函数式或者面向对象代码的强大工具。
 
-我刚接触LiveScript时，我觉得它像是“Perl 6的一个小方言，挣扎着要脱颖而出”。LiveScript的目标实现地如此简单，因为它采用了和Javascript相同的语义，并且严格专注于改善语法本身。
+我刚接触LiveScript时，我觉得它像是“Perl 6的一个小方言，挣扎着要脱颖而出”。LiveScript的目标实现地如此简单，因为它采用了和JavaScript相同的语义，并且严格专注于改善语法本身。
 
 ### 总结
 
