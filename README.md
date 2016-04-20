@@ -6,6 +6,8 @@
 
 ### 2016
 
+* [SocialCalc(译文)](./2016/socialcalc.md)
+
 ### 2015
 
 * [Mac下使用latex遇到的问题及解法](./2015/fixing-latex-in-mac.md)
