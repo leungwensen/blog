@@ -231,7 +231,7 @@ Fred Brooks在他的著作*《设计原本》*中说到，约束可以压缩设�
 
 在语法上，LiveScript用小说的结构替代回调，譬如[backcalls](http://livescript.net/#backcalls)和[cascades](http://livescript.net/#cascades)。它还从语法上提供了书写函数式或者面向对象代码的强大工具。
 
-我刚接触LiveScript时，我觉得它像是“Perl 6的一个小方言，挣扎着要脱颖而出”。LiveScript的目标实现地如此简单，因为它采用了和JavaScript相同的语义，并且严格专注于改善语法本身。
+我刚接触LiveScript时，我觉得它像是“Perl 6的一个小方言，挣扎着要脱颖而出”。LiveScript的目标实现得如此简单，因为它采用了和JavaScript相同的语义，并且严格专注于改善语法本身。
 
 ### 总结
 
