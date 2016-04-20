@@ -406,7 +406,7 @@ SocialCalc 1.0版本在2009年10月19日发布，刚好是VisiCalc初始发行�
 
 ### 19.8.1. 有清晰愿景的主设计师
 
-在The Design of Design[^the-design-of-design]一文中，Fred Brooks指出，在构建复杂系统时，如果我们能专注于连贯的设计理念，那么信息互通可以更流畅，而不会产生分歧。据Brooks的观点，这样连贯的设计理念最好是掌握在某个人心中：
+在《设计原本》[^the-design-of-design]中，Fred Brooks指出，在构建复杂系统时，如果我们能专注于连贯的设计理念，那么信息互通可以更流畅，而不会产生分歧。据Brooks的观点，这样连贯的设计理念最好是掌握在某个人心中：
 
 > 因为概念完整性是一个伟大设计中最重要的因素，而这通常只源自于某个或者少数头脑，因此英明的管理者会大胆把每个设计任务放任给某个有天分的主设计师。
 
@@ -466,9 +466,9 @@ Socialtext为SocialCalc创造了Common Public Attribution License[^cpal]协议�
 
 项目 | 内容
 ---- | ----
-原文链接     | [http://www.aosabook.org/en/socialcalc.html](http://www.aosabook.org/en/socialcalc.html)
-原文作者     | [Audrey Tang](https://github.com/audreyt)
-本文链接     | [http://blog.leungwensen.com/2016/socialcalc.md](http://blog.leungwensen.com/2016/socialcalc.md)
+原文链接 | [http://www.aosabook.org/en/socialcalc.html](http://www.aosabook.org/en/socialcalc.html)
+原文作者 | [Audrey Tang](https://github.com/audreyt)
+本文链接 | [http://blog.leungwensen.com/2016/socialcalc.md](http://blog.leungwensen.com/2016/socialcalc.md)
 
 
 如果发现翻译问题，欢迎反馈：[leungwensen@gmail.com](mailto:leungwensen@gmail.com)

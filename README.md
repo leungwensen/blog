@@ -7,6 +7,7 @@
 ### 2016
 
 * [SocialCalc(译文)](./2016/socialcalc.md)
+* [从SocialCalc到EtherCalc(译文)](./2016/from-socialcalc-to-ethercalc.md)
 
 ### 2015
 
