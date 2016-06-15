@@ -17,7 +17,7 @@
 * [决策树算法](./2015/decision-tree.md)
 * [前端可视化建模技术概览](./2015/frontend-visual-modeling.md)
 * [自制编译器(译本)](./2015/lets-make-a-compiler.md)
-* [图解简单算法(译本)](./2015/an-illustrated-brief-introduction-to-algorithm.md)
+* [~~图解简单算法~~写给大家看的算法书(译本)](./2015/an-illustrated-brief-introduction-to-algorithm.md)
 
 ### 2014
 
