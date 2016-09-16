@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="Content-Type" name="viewport" content="width=device-width, initial-scale=1"/>
+<title>使用CORS</title>
+
+  <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/lib/github-markdown-2.3.0.min.css">
+  <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.css">
+</head>
+<body>
+<nav id="toc">
+  <div id="toc-body" class="toc-body"></div>
+</nav>
+<article id="markdown">
+  <div id="markdown-body" class="markdown-body"><h1>使用CORS</h1>
+<h2>简介</h2>
+<p>API是富网络应用体验的素材。不过这些素材很难顺畅地在浏览器上组合，因为可供选择的跨域请求方案不尽完善，譬如<a href="https://en.wikipedia.org/wiki/JSONP">JSON-P</a>（由于安全问题限制了使用）；又譬如设置代理服务器（设置和维护比较麻烦）。</p>
+<p><a href="http://www.w3.org/TR/cors/">Cross-Origin Resource Sharing</a>（CORS）是一种允许浏览器发起跨域连接的W3C标准。它完全基于XMLHttpRequest对象<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>，使得开发者可以使用和同域请求一样的语法去处理跨域请求。</p>
+<p>CORS的使用场景很简单。我们假设<code>bob.com</code>站点想要访问<code>alice.com</code>站点的某些数据。这种类型的请求由于浏览器的<a href="https://en.wikipedia.org/wiki/Same-origin_policy">同源策略</a>通常是不被允许的。不过，如果支持CORS请求，那么<code>alice.com</code>站点就可以通过增加一些特定的响应头信息来接受<code>bob.com</code>站点的数据访问。</p>
+<p>从上述例子可看到，需要服务器和客户端的协同才能实现CORS支持。当然，如果你是客户端开发者，那么你可以很幸运地略过大部分的实现细节。本文的余下部分会同时说明客户端如何发送跨域请求，以及如何配置服务器以支持CORS。</p>
+<h2>发送CORS请求</h2>
+<p>本节讲解用javascript如何发送跨域请求。</p>
+<h3>生成XMLHttpRequest实例对象</h3>
+<p>目前以下浏览器都支持CORS：</p>
+<ul>
+<li>Chrome 3+</li>
+<li>Firefox 3.5+</li>
+<li>Opera 12+</li>
+<li>Safari 4+</li>
+<li>Internet Explorer 8+</li>
+</ul>
+<p>（兼容CORS的完整浏览器列表参见<a href="http://caniuse.com/#search=cors">http://caniuse.com/#search=cors</a>）</p>
+<p>Chrome, Firefox, Opera和Safari浏览器使用的是<a href="http://www.html5rocks.com/en/tutorials/file/xhr2/">XMLHttpRequest2对象</a>。IE浏览器使用的是类似的XDomainRequest对象，它和XMLHttpRequest大致相同，但多了一些<a href="http://blogs.msdn.com/b/ieinternals/archive/2010/05/13/xdomainrequest-restrictions-limitations-and-workarounds.aspx">安全措施</a>。</p>
+<p>首先需要正确创建一个请求对象。Nicholas Zakas写了<a href="http://www.nczonline.net/blog/2010/05/25/cross-domain-ajax-with-cross-origin-resource-sharing/">一个简单的helper函数</a>来解决浏览器差异：</p>
+<pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createCORSRequest</span>(<span class="hljs-params">method, url</span>) </span>{
+  <span class="hljs-keyword">var</span> xhr = <span class="hljs-keyword">new</span> XMLHttpRequest();
+  <span class="hljs-keyword">if</span> (<span class="hljs-string">"withCredentials"</span> <span class="hljs-keyword">in</span> xhr) {
+
+    <span class="hljs-comment">// Check if the XMLHttpRequest object has a "withCredentials" property.</span>
+    <span class="hljs-comment">// "withCredentials" only exists on XMLHTTPRequest2 objects.</span>
+    xhr.open(method, url, <span class="hljs-literal">true</span>);
+
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> XDomainRequest != <span class="hljs-string">"undefined"</span>) {
+
+    <span class="hljs-comment">// Otherwise, check if XDomainRequest.</span>
+    <span class="hljs-comment">// XDomainRequest only exists in IE, and is IE's way of making CORS requests.</span>
+    xhr = <span class="hljs-keyword">new</span> XDomainRequest();
+    xhr.open(method, url);
+
+  } <span class="hljs-keyword">else</span> {
+
+    <span class="hljs-comment">// Otherwise, CORS is not supported by the browser.</span>
+    xhr = <span class="hljs-literal">null</span>;
+
+  }
+  <span class="hljs-keyword">return</span> xhr;
+}
+
+<span class="hljs-keyword">var</span> xhr = createCORSRequest(<span class="hljs-string">'GET'</span>, url);
+<span class="hljs-keyword">if</span> (!xhr) {
+  <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'CORS not supported'</span>);
+}
+</code></pre>
+<h3>事件</h3>
+<p>原生的XMLHttpRequest对象只暴露了一个事件，onreadystatechange，来处理所有的响应。XMLHttpRequest2对象保留了这个事件，并且引入了不少新的事件。下面是完整的列表：</p>
+<table>
+<thead>
+<tr>
+<th>事件处理函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>onloadstart*</td>
+<td>发起请求时触发</td>
+</tr>
+<tr>
+<td>onprogress</td>
+<td>加载、发送数据时触发</td>
+</tr>
+<tr>
+<td>onabort*</td>
+<td>丢弃请求时触发。譬如调用.abort()方法时</td>
+</tr>
+<tr>
+<td>onerror</td>
+<td>请求失败时触发</td>
+</tr>
+<tr>
+<td>onload</td>
+<td>请求成功完成时触发</td>
+</tr>
+<tr>
+<td>ontimeout</td>
+<td>当超过了预设时间还未完成请求时触发</td>
+</tr>
+<tr>
+<td>onloadend*</td>
+<td>当请求完成（无论成功与否）时触发</td>
+</tr>
+</tbody>
+</table>
+<p>（IE的XDomainRequest不支持带*号的事件）</p>
+<p>来源：<a href="http://www.w3.org/TR/XMLHttpRequest2/#events">http://www.w3.org/TR/XMLHttpRequest2/#events</a></p>
+<p>大部分情况下，你只需要用到onload和onerror事件：</p>
+<pre><code class="language-javascript">xhr.onload = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+ <span class="hljs-keyword">var</span> responseText = xhr.responseText;
+ <span class="hljs-built_in">console</span>.log(responseText);
+ <span class="hljs-comment">// process the response.</span>
+};
+
+xhr.onerror = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'There was an error!'</span>);
+};
+</code></pre>
+<p>当请求发生错误时，浏览器并没有很好地提供错误信息。譬如Firefox在任何错误发生时都只会返回status 0和空的statusText。当然，浏览器会在调试控制台中输出错误信息，只是我们无法从javascript中访问这个信息。当处理onerror事件时，我们能获知发生了错误，但无法获取进一步的信息。</p>
+<h3>withCredentials</h3>
+<p>标准的CORS请求默认不发送或者设置任何cookies。如需在请求中携带cookies，可以把XMLHttpRequest对象的.withCredentials属性设置成true：</p>
+<pre><code class="language-javascript">xhr.withCredentials = <span class="hljs-literal">true</span>;
+</code></pre>
+<p>要使这段代码正常运作，服务器也需要通过把响应头Access-Control-Allow-Credentials设置为&quot;true&quot;来开启credentials。详见下面的服务器设置部分。</p>
+<pre><code>Access-Control-Allow-Credentials: true
+</code></pre>
+<p>.withCredentials会使得请求带上服务器的所有cookies，并且也会为会话设置从服务器带来的所有cookies。这里注意一点，所有cookies仍然遵从同源策略，因此从javascript代码并不能通过document.cookie或者响应头信息来访问这些cookies。这些cookies信息只能通过服务器来控制。</p>
+<h3>发送请求</h3>
+<p>现在CORS请求已经配置完成，可以通过调用send()方法来发送请求：</p>
+<pre><code class="language-javascript">xhr.send();
+</code></pre>
+<p>如果请求带有body信息，可以把body设置为send方法的参数。</p>
+<p>这就是所有的步骤了！如果服务器端已经做好了CORS相关配置，那么onload事件就可以拿到相应数据并且触发了，这部分和我们熟悉的同域XHR并无二致。</p>
+<h3>完整示例</h3>
+<p>下面是一个CORS请求的完整示例。运行下列代码就可以在浏览器控制台的network栏看到一个真实的请求信息。</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// Create the XHR object.</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createCORSRequest</span>(<span class="hljs-params">method, url</span>) </span>{
+  <span class="hljs-keyword">var</span> xhr = <span class="hljs-keyword">new</span> XMLHttpRequest();
+  <span class="hljs-keyword">if</span> (<span class="hljs-string">"withCredentials"</span> <span class="hljs-keyword">in</span> xhr) {
+    <span class="hljs-comment">// XHR for Chrome/Firefox/Opera/Safari.</span>
+    xhr.open(method, url, <span class="hljs-literal">true</span>);
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> XDomainRequest != <span class="hljs-string">"undefined"</span>) {
+    <span class="hljs-comment">// XDomainRequest for IE.</span>
+    xhr = <span class="hljs-keyword">new</span> XDomainRequest();
+    xhr.open(method, url);
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-comment">// CORS not supported.</span>
+    xhr = <span class="hljs-literal">null</span>;
+  }
+  <span class="hljs-keyword">return</span> xhr;
+}
+
+<span class="hljs-comment">// Helper method to parse the title tag from the response.</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getTitle</span>(<span class="hljs-params">text</span>) </span>{
+  <span class="hljs-keyword">return</span> text.match(<span class="hljs-string">'&lt;title&gt;(.*)?&lt;/title&gt;'</span>)[<span class="hljs-number">1</span>];
+}
+
+<span class="hljs-comment">// Make the actual CORS request.</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeCorsRequest</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-comment">// All HTML5 Rocks properties support CORS.</span>
+  <span class="hljs-keyword">var</span> url = <span class="hljs-string">'http://updates.html5rocks.com'</span>;
+
+  <span class="hljs-keyword">var</span> xhr = createCORSRequest(<span class="hljs-string">'GET'</span>, url);
+  <span class="hljs-keyword">if</span> (!xhr) {
+    alert(<span class="hljs-string">'CORS not supported'</span>);
+    <span class="hljs-keyword">return</span>;
+  }
+
+  <span class="hljs-comment">// Response handlers.</span>
+  xhr.onload = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">var</span> text = xhr.responseText;
+    <span class="hljs-keyword">var</span> title = getTitle(text);
+    alert(<span class="hljs-string">'Response from CORS request to '</span> + url + <span class="hljs-string">': '</span> + title);
+  };
+
+  xhr.onerror = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    alert(<span class="hljs-string">'Woops, there was an error making the request.'</span>);
+  };
+
+  xhr.send();
+}
+
+makeCorsRequest();
+</code></pre>
+<h2>服务器端配置CORS</h2>
+<p>CORS中最复杂的处理细节被浏览器和服务器实现并且屏蔽了。浏览器为请求添加一些额外的头信息，有时甚至在处理CORS请求时发送额外的请求。这些额外的处理对客户端而言是不可见的（但可以通过抓包分析工具发现，譬如<a href="https://www.wireshark.org/">Wireshark</a>）。</p>
+<h3>CORS流程图</h3>
+<pre><code class="language-sequence">    javascript代码-&gt;&gt;浏览器: xhr.send();
+    浏览器-&gt;&gt;服务器: preflight请求（如果必要）
+    服务器-&gt;&gt;浏览器: preflight响应（如果必要）
+    浏览器-&gt;&gt;服务器: 真实请求
+    服务器-&gt;&gt;浏览器: 真实响应
+    浏览器-&gt;&gt;javascript代码: 触发onload()或者onerror()
+</code></pre>
+<p>浏览器端的实现由浏览器开发厂商负责。这部分主要解释如何配置服务器以支持CORS。</p>
+<h3>CORS请求的类型</h3>
+<p>跨域请求有两种：</p>
+<ol>
+<li>简单请求</li>
+<li>复杂请求（作者自创的说法）<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup></li>
+</ol>
+<p>简单请求必须符合下列标准：</p>
+<ul>
+<li>HTTP方法必须是下列之一（大小写敏感）：
+<ul>
+<li>HEAD</li>
+<li>GET</li>
+<li>POST</li>
+</ul>
+</li>
+<li>HTTP头信息只能自定义下列几项（大小写敏感）：
+<ul>
+<li>Accept</li>
+<li>Accept-Language</li>
+<li>Content-Language</li>
+<li>Last-Event-ID</li>
+<li>Content-Type, 如果指定，则其值只能是下列之一：
+<ul>
+<li>application/x-www-form-urlencoded</li>
+<li>multipart/form-data</li>
+<li>text/plain</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>这样的请求即便不使用CORS，也可以简单实现，因此被定义为简单请求。譬如JSON-P请求可以发起跨域的GET请求，而HTML本身也可以发起表单数据的POST请求。</p>
+<p>如果一个跨域请求不符合上述标准，那它就是复杂请求。复杂请求需要浏览器和服务器进行额外的连接（所谓的preflight请求），具体过程稍后详述。</p>
+<h3>处理简单请求</h3>
+<p>先看客户端发送的简单请求。下列代码演示了发送简单请求的javascript代码和响应的HTTP请求。CORS指定的头信息用星号标记。</p>
+<p>javascript:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">var</span> url = <span class="hljs-string">'http://api.alice.com/cors'</span>;
+<span class="hljs-keyword">var</span> xhr = createCORSRequest(<span class="hljs-string">'GET'</span>, url);
+xhr.send();
+</code></pre>
+<p>HTTP请求:</p>
+<pre><code>GET /cors HTTP/1.1
+**Origin: http://api.bob.com**
+Host: api.alice.com
+Accept-Language: en-US
+Connection: keep-alive
+User-Agent: Mozilla/5.0...
+</code></pre>
+<p>首先需要指出的是，一个有效的CORS请求的头信息中<strong>一定</strong>包含Origin字段。<a href="http://tools.ietf.org/html/draft-abarth-origin-09">Origin字段</a>是浏览器添加的，用户不能编辑。它的值由请求源的协议（譬如http）、域名（<a href="http://xn--bob-eo8e561t.com">譬如bob.com</a>）以及端口（当且仅当非默认端口时才会添加，譬如81）组成，譬如http://api.alice.com。</p>
+<p>指定一个请求是否是跨域请求并不需要强调Origin信息，因为不仅跨域请求有这个头信息，同域请求也有可能有。Firefox的同域请求不会添加Origin信息，但Chrome和Safari的同域POST/PUT/DELETE请求都会添加Origin信息（同域GET请求没有）。下面就是一个拥有Origin头信息的同域请求：</p>
+<p>HTTP请求：</p>
+<pre><code>POST /cors HTTP/1.1
+Origin: http://api.bob.com
+Host: api.bob.com
+</code></pre>
+<p>不过不用担心，浏览器会自动为你判断一个请求是同域请求还是跨域请求。即使指定了CORS标准头信息，如果你请求的是同域的资源，浏览器就会为你发送同域的请求。不过需要注意，如果服务器代码要求提供Origin信息以判断请求源的合法性，那么就需要在请求中带上Origin信息。</p>
+<p>下列是一个有效的响应，CORS定义的头信息用星号标记。</p>
+<p>HTTP响应：</p>
+<pre><code>**Access-Control-Allow-Origin: http://api.bob.com**
+**Access-Control-Allow-Credentials: true**
+**Access-Control-Expose-Headers: FooBar**
+Content-Type: text/html; charset=utf-8
+</code></pre>
+<p>所有和CORS相关的头信息都有<code>Access-Control-</code>前缀。下面是各个头信息的细节。</p>
+<p><code>Access-Control-Allow-Origin (必须)</code> 所有有效的CORS响应必须包含这个头信息。移除这个头信息将会导致CORS请求失败。这个字段的值可以是请求的Origin信息（如上述），也可以指定为&quot;<em>“以适配任意请求源。如果你希望允许任意站点访问你的数据，那么可以使用”</em>&quot;。但如果你希望更好地控制数据的访问权限，那么使用一个具体的Origin信息是更好的选择。</p>
+<p><code>Access-Control-Allow-Credentials (可选)</code> CORS请求默认情况下是不带cookies的。使用这个头信息可以指定请求带上cookies。这个头信息字段唯一有效的值是true（全小写）。如果你不需要cookies信息，就不要设置这个字段（而不是把字段值设置成false）。</p>
+<p>Access-Control-Allow-Credentials和XMLHttpRequest2对象的<a href="http://www.html5rocks.com/en/tutorials/cors/#toc-withcredentials">withCredentials属性</a>配合使用。要使带cookies的CORS请求正常工作，这两者都必须设置成true。如果.withCredentials为true，但响应头中没有Access-Control-Allow-Credentials字段，那么请求将失败（反之亦然）。</p>
+<p>除非你确信需要在CORS请求中包含cookies，否则推荐不设置这个头信息。</p>
+<p><code>Access-Control-Expose-Headers (可选)</code> XMLHttpRequest2对象有一个getResponseHeader()方法用于返回响应的某个头信息。在CORS请求中，getResponseHeader()方法只能访问一些简单响应头信息。所谓简单的响应头信息如下所示：</p>
+<ul>
+<li>Cache-Control</li>
+<li>Content-Language</li>
+<li>Content-Type</li>
+<li>Expires</li>
+<li>Last-Modified</li>
+<li>Pragma</li>
+</ul>
+<p>如果你希望客户端访问简单响应头信息以外的头信息，你就需要用到Access-Control-Expose-Headers。这个字段的值是由逗号分隔的、你希望暴露给客户端的头信息字段列表。</p>
+<h3>处理复杂请求</h3>
+<p>目前为止，我们已经知道怎样处理一个简单的跨域GET请求，那如何更进一步呢？也许你需要支持其它的HTTP动词，譬如PUT或者DELETE，或者你想要通过指定<code>Content-Type</code>为<code>application/json</code>以支持JSON。那么你需要处理一个复杂请求。</p>
+<p>复杂请求对客户端而言和简单请求相似，不过它其实由两个请求组成。浏览器会先发送一个preflight请求，向服务器申请真实请求的访问权限。权限申请完成后浏览器才会发送真实请求。这部分处理对用户不透明。preflight请求也可以被缓存，这样就不需要在每次真实请求前都发送一遍。</p>
+<p>下面是一个复杂请求的例子：</p>
+<p>javascript:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">var</span> url = <span class="hljs-string">'http://api.alice.com/cors'</span>;
+<span class="hljs-keyword">var</span> xhr = createCORSRequest(<span class="hljs-string">'PUT'</span>, url);
+xhr.setRequestHeader(
+    <span class="hljs-string">'X-Custom-Header'</span>, <span class="hljs-string">'value'</span>);
+xhr.send();
+</code></pre>
+<p>Preflight请求:</p>
+<pre><code>OPTIONS /cors HTTP/1.1
+**Origin: http://api.bob.com**
+**Access-Control-Request-Method: PUT**
+**Access-Control-Request-Headers: X-Custom-Header**
+Host: api.alice.com
+Accept-Language: en-US
+Connection: keep-alive
+User-Agent: Mozilla/5.0...
+</code></pre>
+<p>和简单请求一样，浏览器会在每个请求中加上Origin头信息，包括preflight请求。preflight请求是一个HTTP OPTIONS请求（所以需要确保服务器能处理这个HTTP方法）。它也包含了一些额外的头信息。</p>
+<p><code>Access-Control-Request-Method</code> 真实请求的HTTP方法。这个头信息一定会存在，即使HTTP方法是之前提过的简单HTTP方法（GET, POST, HEAD）。</p>
+<p><code>Access-Control-Request-Headers</code> 逗号分隔的真实请求中的非简单请求头信息字段列表。</p>
+<p>preflight请求的作用就是在真实请求发送前为其申请权限。服务器需要检查preflight请求指定的HTTP方法以及非简单请求头信息字段是否合法。</p>
+<p>如果HTTP方法和头信息字段合法，服务器可以返回如下响应：</p>
+<p>Preflight请求：</p>
+<pre><code>OPTIONS /cors HTTP/1.1
+**Origin: http://api.bob.com**
+**Access-Control-Request-Method: PUT**
+**Access-Control-Request-Headers: X-Custom-Header**
+Host: api.alice.com
+Accept-Language: en-US
+Connection: keep-alive
+User-Agent: Mozilla/5.0...
+</code></pre>
+<p>Preflight响应：</p>
+<pre><code>**Access-Control-Allow-Origin: http://api.bob.com**
+**Access-Control-Allow-Methods: GET, POST, PUT**
+**Access-Control-Allow-Headers: X-Custom-Header**
+Content-Type: text/html; charset=utf-8
+</code></pre>
+<p><code>Access-Control-Allow-Origin (必须)</code> 和简单请求的响应一样，preflight响应中必须包含这个头信息。</p>
+<p><code>Access-Control-Allow-Methods (必须)</code> 以逗号分隔的支持的HTTP方法列表。虽然preflight请求只申请一个HTTP方法的权限，这个头信息也可以包含所有支持的HTTP方法。可以在单个preflight响应中包含多个请求类型的信息。因为preflight响应有可能被缓存，所以这一点特性非常有用。</p>
+<p><code>Access-Control-Allow-Headers (如果请求头中包含了Access-Control-Request-Headers则为必须字段)</code> 以逗号分隔的支持的请求头信息字段。和上述的<code>Access-Control-Allow-Methods</code>一样，这个字段也可以列举所有服务器支持的请求头信息字段（而不仅是preflight请求指定的请求头信息字段）。</p>
+<p><code>Access-Control-Allow-Credentials (可选)</code> 和简单请求的响应一致。</p>
+<p><code>Access-Control-Max-Age (可选)</code> 为<strong>每一个</strong>请求都发送preflight请求的成本很大，因为浏览器把每一个请求都变成了两个请求。这个字段的值指定了preflight响应被缓存的秒数。</p>
+<p>一旦preflight请求获取到了响应权限，浏览器就会发送真实请求。真实请求和之前的简单请求类似，响应的处理也一致：</p>
+<p>真实请求：</p>
+<pre><code>PUT /cors HTTP/1.1
+Origin: http://api.bob.com
+Host: api.alice.com
+X-Custom-Header: value
+Accept-Language: en-US
+Connection: keep-alive
+User-Agent: Mozilla/5.0...
+</code></pre>
+<p>真实响应：</p>
+<pre><code>Access-Control-Allow-Origin: http://api.bob.com
+Content-Type: text/html; charset=utf-8
+</code></pre>
+<p>如果服务器希望屏蔽CORS请求，那么它只需要返回一个普通响应（譬如HTTP 200），而不在响应体中指定任何CORS头信息。当preflight请求中指定的HTTP方法或者请求头信息不符合要求是，服务器就需要屏蔽这个请求。接收到普通响应时，由于没有检测到CORS定义的头信息，浏览器会认为请求非法，就不会继续发送真实请求：</p>
+<p>Preflight请求：</p>
+<pre><code>OPTIONS /cors HTTP/1.1
+**Origin: http://api.bob.com**
+**Access-Control-Request-Method: PUT**
+**Access-Control-Request-Headers: X-Custom-Header**
+Host: api.alice.com
+Accept-Language: en-US
+Connection: keep-alive
+User-Agent: Mozilla/5.0...
+</code></pre>
+<p>Preflight响应：</p>
+<pre><code>// ERROR - No CORS headers, this is an invalid request!
+Content-Type: text/html; charset=utf-8
+</code></pre>
+<p>如果CORS请求出现错误，浏览器就会触发客户端的onerror事件，并且在控制台输出如下错误：</p>
+<p><code>XMLHttpRequest cannot load http://api.alice.com. Origin http://api.bob.com is not allowed by Access-Control-Allow-Origin.</code></p>
+<p>浏览器不会给出错误的具体信息，只会提示出错了。</p>
+<h3>关于安全</h3>
+<p>虽然CORS规范了跨域请求，但通过CORS规范头信息并不能取代传统的安全措施。CORS不能作为你站点资源的唯一安全保障。如果你需要为站点资源加上安全限制，最好的办法是使用CORS赋予资源访问权限的同时，应用额外的安全机制，譬如cookies、<a href="http://oauth.net/2/">OAuth 2.0</a>等。</p>
+<h2>使用JQuery发送CORS请求</h2>
+<p>JQuery的<a href="http://api.jquery.com/jQuery.ajax/">$.ajax()</a>方法既能发送普通XHR请求，也能发送CORS请求。关于JQuery的实现，有几点注意事项：</p>
+<ul>
+<li>JQuery的CORS实现不支持IE的XDomainRequest对象。不过有JQuery插件可以实现这个支持。详见<a href="http://bugs.jquery.com/ticket/8283">http://bugs.jquery.com/ticket/8283</a></li>
+<li>如果浏览器支持CORS，则<code>$.support.cors</code>的值为true（IE中为false，原因如上一点）。这是检查CORS支持的快捷方法</li>
+</ul>
+<p>下面是使用JQuery发送CORS请求的示例代码。注释描述了各个属性对CORS请求的作用。</p>
+<pre><code class="language-javascript">$.ajax({
+
+  <span class="hljs-comment">// The 'type' property sets the HTTP method.</span>
+  <span class="hljs-comment">// A value of 'PUT' or 'DELETE' will trigger a preflight request.</span>
+  type: <span class="hljs-string">'GET'</span>,
+
+  <span class="hljs-comment">// The URL to make the request to.</span>
+  url: <span class="hljs-string">'http://updates.html5rocks.com'</span>,
+
+  <span class="hljs-comment">// The 'contentType' property sets the 'Content-Type' header.</span>
+  <span class="hljs-comment">// The JQuery default for this property is</span>
+  <span class="hljs-comment">// 'application/x-www-form-urlencoded; charset=UTF-8', which does not trigger</span>
+  <span class="hljs-comment">// a preflight. If you set this value to anything other than</span>
+  <span class="hljs-comment">// application/x-www-form-urlencoded, multipart/form-data, or text/plain,</span>
+  <span class="hljs-comment">// you will trigger a preflight request.</span>
+  contentType: <span class="hljs-string">'text/plain'</span>,
+
+  xhrFields: {
+    <span class="hljs-comment">// The 'xhrFields' property sets additional fields on the XMLHttpRequest.</span>
+    <span class="hljs-comment">// This can be used to set the 'withCredentials' property.</span>
+    <span class="hljs-comment">// Set the value to 'true' if you'd like to pass cookies to the server.</span>
+    <span class="hljs-comment">// If this is enabled, your server must respond with the header</span>
+    <span class="hljs-comment">// 'Access-Control-Allow-Credentials: true'.</span>
+    withCredentials: <span class="hljs-literal">false</span>
+  },
+
+  headers: {
+    <span class="hljs-comment">// Set any custom headers here.</span>
+    <span class="hljs-comment">// If you set any non-simple headers, your server must include these</span>
+    <span class="hljs-comment">// headers in the 'Access-Control-Allow-Headers' response header.</span>
+  },
+
+  success: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-comment">// Here's where you handle a successful response.</span>
+  },
+
+  error: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-comment">// Here's where you handle an error response.</span>
+    <span class="hljs-comment">// Note that if the error was due to a CORS issue,</span>
+    <span class="hljs-comment">// this function will still fire, but there won't be any additional</span>
+    <span class="hljs-comment">// information about the error.</span>
+  }
+});
+</code></pre>
+<h2>通过Chrome插件发送CORS请求</h2>
+<p>Chrome插件有两种不同的方法支持跨域请求：</p>
+<ul>
+<li>
+<p>把域名添加到manifest.json文件中。<strong>只要</strong>mainfest.json文件的&quot;permissions&quot;部分包含了域名，Chrome插件可以发出到任意域名的请求：</p>
+<p>“permissions”: [ “http://*.html5rocks.com”]</p>
+</li>
+</ul>
+<p>并且服务器不需要添加任何CORS头信息来支持这个请求。</p>
+<ul>
+<li>CORS请求。如果域名没有包含在mainfest.json文件中，那么Chrome插件可以创建标准的CORS请求。Origin头信息字段的值为&quot;chrome-extension://[CHROME EXTENSION ID]&quot;。这样的请求必须符合本文描述的CORS标准。</li>
+</ul>
+<h2>已知问题</h2>
+<p>所有的浏览器项目都还在开发CORS支持相关的特性。下面是已知问题的列表（至10/2/2013）：</p>
+<ol>
+<li>已修复<s>XMLHttpRequests的getAllResponseHeaders()方法没有遵从Access-Control-Expose-Headers - 调用getAllResponseHeaders()方法时Firefox没有返回响应头信息。(<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=608735">Firefox bug</a>)。<a href="https://bugs.webkit.org/show_bug.cgi?id=41210">WebKit中类似的bug</a>已修复。</s></li>
+<li>onerror事件获取不了错误信息 - 当onerror事件触发时，status为0，statusText字段为空。这也许符合API设计的初衷，但当CORS请求失败时，开发者无法通过调试定位问题。</li>
+</ol>
+<h2>CORS服务器流程图</h2>
+<p>下面的流程图展示了服务器添加CORS响应头信息的决策过程。</p>
+<figure><img src="./cors/cors_server_flowchart.png" alt="原图链接"></figure>
+<h2>CORS和图片</h2>
+<p>在Canvas和WebGL上下文中，跨域的图片会带来很多大问题。你可以通过为image元素设置crossOrigin属性的办法解决其中大部分问题。细节可以参考这两篇文章：<a href="http://blog.chromium.org/2011/07/using-cross-domain-images-in-webgl-and.html">《Chromium Blog: 在WebGL中使用跨域图片》</a>和<a href="https://hacks.mozilla.org/2011/11/using-cors-to-load-webgl-textures-from-cross-domain-images/">《Mozilla Hacks: 使用CORS从跨域图片中加载WebGL材质》</a>。</p>
+<p>MDN上面有相关的实现细节：<a href="https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image">CORS-enabled Image</a>。</p>
+<h2>相关资源</h2>
+<p>如果想深入了解CORS，可以参考下列资源：</p>
+<ul>
+<li><a href="http://www.w3.org/TR/cors/">CORS标准</a></li>
+<li>Nicholas Zakas写的<a href="https://www.nczonline.net/blog/2010/05/25/cross-domain-ajax-with-cross-origin-resource-sharing/">很好的CORS教程</a></li>
+<li>更多CORS服务器配置的信息：<a href="http://enable-cors.org/">enable-cors.org</a></li>
+</ul>
+<h2>文档信息</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>原文链接</td>
+<td><a href="http://www.html5rocks.com/en/tutorials/cors/">http://www.html5rocks.com/en/tutorials/cors/</a></td>
+</tr>
+<tr>
+<td>原文作者</td>
+<td><a href="http://www.html5rocks.com/en/profiles/#monsurhossain">Monsur Hossain</a></td>
+</tr>
+<tr>
+<td>原文发布日期</td>
+<td>October 26th, 2011</td>
+</tr>
+<tr>
+<td>原文更新日期</td>
+<td>October 29th, 2013</td>
+</tr>
+<tr>
+<td>本文链接</td>
+<td><a href="http://blog.leungwensen.com/2015/cors.md">http://blog.leungwensen.com/2015/cors.md</a></td>
+</tr>
+</tbody>
+</table>
+<p>如果发现翻译问题，欢迎反馈：<a href="mailto:leungwensen@gmail.com">leungwensen@gmail.com</a></p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>浏览器中的js对象，已被W3C组织标准化。用于与服务器进行通信，是web2.0的核心－<a href="https://en.wikipedia.org/wiki/Ajax_(programming)">ajax技术</a>的基础。 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p>译者注：W3C的标准里只对简单跨域请求作出定义，凡是不符合简单请求定义的跨域请求都是“默认的”、“普通的”请求。 <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+</div>
+</article>
+<div id="loading">
+  <div class="sk-double-bounce">
+    <div class="sk-child sk-double-bounce1"></div>
+    <div class="sk-child sk-double-bounce2"></div>
+  </div>
+</div>
+
+<script src="http://leungwensen.github.io/zfinder/dist/lib/jquery-3.1.0.min.js"></script>
+<script src="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.js"></script>
+</body>
+</html>

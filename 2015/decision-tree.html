@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="Content-Type" name="viewport" content="width=device-width, initial-scale=1"/>
+<title>决策树算法</title>
+
+  <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/lib/github-markdown-2.3.0.min.css">
+  <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.css">
+</head>
+<body>
+<nav id="toc">
+  <div id="toc-body" class="toc-body"></div>
+</nav>
+<article id="markdown">
+  <div id="markdown-body" class="markdown-body"><h1>决策树算法</h1>
+<h2>概述</h2>
+<p>决策树是一种实现分治策略的层次数据结构。<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
+<p>举个 🌰 要不要去见相亲对象呢？</p>
+<pre><code class="language-graph-TB">    A[&quot;年龄&quot;] --&gt;|&gt;=30| no1(&quot;不见&quot;)
+    A --&gt;|&lt;30| B[&quot;长相&quot;]
+    B --&gt;|&quot;丑&quot;| no2(&quot;不见&quot;)
+    B --&gt;|&quot;中等偏帅&quot;| C[&quot;收入&quot;]
+    C --&gt;|&quot;&lt;100k&quot;| no3(&quot;不见&quot;)
+    C --&gt;|&quot;&gt;=500&quot;| yes1(&quot;见！💖&quot;)
+    C --&gt;|&quot;(100k, 500k)&quot;| D[&quot;程序🐵&quot;]
+    D --&gt;|&quot;是&quot;| no4(&quot;什么鬼？&quot;)
+    D --&gt;|&quot;否&quot;| yes2(&quot;见！&quot;)
+</code></pre>
+<p>这就是一棵已经构造好的决策树，其中，每个矩形代表一个特征，每个圆角矩形代表一个类标签。输入数据后，根据不同的特征值过滤最终可以得到输入数据所属的类别。决策树算法的目标就是从一堆原始数据里构造这么一棵决策树，以作为预测、判断和决策的参考。</p>
+<p>决策树算法可以用作分类（分类决策树）也可以用作回归（回归决策树），可以用于提取特征值、相关性分析、建立专家系统、搜索排序、邮件过滤等。</p>
+<p>在2006年，国际数据挖掘社区推出的《数据挖掘十大算法》中评选出来的十大算法里有两个是决策树相关的算法（C4.5和CART），可见决策树算法算法在数据挖掘中应用的广泛程度。</p>
+<h2>ID3(Iterative Dichotomiser 3)</h2>
+<figure><img src="./decision-tree/ross-quinlan.jpg" alt="Ross Quinlan"></figure>
+<p>ID3诞生于70年代末，由<a href="http://www.rulequest.com/Personal/">Ross Quinlan</a>提出。这个算法倾向更小的树，并且越能带来熵减的决策节点离根节点越近。</p>
+<p>ID3每次确定划分数据集S的特征时，会计算每一个未使用的属性，计算其[熵（Entropy）](<a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)">https://en.wikipedia.org/wiki/Entropy_(information_theory)</a><code>H(S)</code>，然后选取导致最小熵值的属性作为特征值，分割数据集S得到子数据集。这是一种贪心算法，并不保证得到一棵最小树（找最小树的算法是NP完全算法），只是准确度和效率的一个权衡的结果。然后对每一个子数据集进行同样的处理，并且在下列情况下停止递归处理：</p>
+<ul>
+<li>子数据集所有元素归属同一类别，这时创建叶子节点并标记为该类别</li>
+<li>没有任何未使用的属性，这时创建叶子节点并标记为子数据集中出现次数最多的类别</li>
+<li>子数据集中没有元素，这时创建叶子节点，并标记为父数据集中出现最多的类别</li>
+</ul>
+<p><strong>熵值</strong>的计算方式为：</p>
+<pre><code class="language-math">    H(S) = - \sum_{x \in X}p(x)log_{2}p(x)
+</code></pre>
+<ul>
+<li>S: 当前数据集</li>
+<li>X: S中的所有类别</li>
+<li>p(x): 类别x在S中所占的比例</li>
+</ul>
+<p>用ID3构建一棵决策树的过程可以用下述伪代码来表示：</p>
+<pre><code>tree = {};
+tree.root = ID3(S);
+function ID3(S){
+    IF 数据集S纯度达到标准或者符合其它终止条件 THEN 返回类标签
+    ELSE
+        计算所有特征的熵值
+        取最小熵值对应特征划分数据集S
+        创建分支节点B
+            FOR 每个划分的子数据集S'
+                B.splitS' = ID3(S')
+        RETURN 分支节点B
+}
+</code></pre>
+<h3>ID3可视化</h3>
+<pre><code class="language-html-">&lt;div id=&quot;visualize-id3&quot;&gt;
+    &lt;nav class=&quot;toolbar&quot;&gt;
+        &lt;div class=&quot;menu menu-horizontal u-1-2&quot;&gt;
+            &lt;ul class=&quot;menu-list&quot;&gt;
+                &lt;li class=&quot;menu-item&quot;&gt;
+                    &lt;span class=&quot;color-select menu-link&quot; data-color=&quot;#33CCFF&quot; style=&quot;background-color: #33CCFF;&quot;&gt;&amp;nbsp;&lt;/span&gt;
+                &lt;/li&gt;
+                &lt;li class=&quot;menu-item&quot;&gt;
+                &lt;li class=&quot;menu-item&quot;&gt;
+                    &lt;span class=&quot;color-select menu-link&quot; data-color=&quot;#009933&quot; style=&quot;background-color: #009933;&quot;&gt;&amp;nbsp;&lt;/span&gt;
+                &lt;/li&gt;
+                &lt;li class=&quot;menu-item&quot;&gt;
+                    &lt;span class=&quot;color-select menu-link&quot; data-color=&quot;#FF6600&quot; style=&quot;background-color: #FF6600;&quot;&gt;&amp;nbsp;&lt;/span&gt;
+                &lt;/li&gt;
+                &lt;li class=&quot;menu-item&quot;&gt;
+                    &lt;span class=&quot;color-select menu-link&quot; data-color=&quot;#FFC508&quot; style=&quot;background-color: #FFC508;&quot;&gt;&amp;nbsp;&lt;/span&gt;
+                &lt;/li&gt;
+                &lt;li class=&quot;menu-item&quot;&gt;
+                    &lt;span class=&quot;btn-clear menu-link&quot;&gt;清空&lt;/span&gt;
+                &lt;/li&gt;
+                &lt;li class=&quot;menu-item&quot;&gt;
+                    &lt;span class=&quot;menu-link&quot;&gt;选择颜色并画点&lt;/span&gt;
+                &lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/div&gt;
+    &lt;/nav&gt;
+    &lt;canvas class=&quot;training-canvas&quot; width=&quot;450&quot; height=&quot;450&quot;&gt;&lt;/canvas&gt;
+    &lt;svg class=&quot;decision-tree&quot; width=&quot;450&quot; height=&quot;450&quot;&gt;&lt;g/&gt;&lt;/svg&gt;
+&lt;/div&gt;
+</code></pre>
+<pre><code class="language-link-">./decision-tree/main.css
+</code></pre>
+<pre><code class="language-script-">../lib/d3/d3.js
+../lib/dagre-d3/dist/dagre-d3.js
+./decision-tree/main.dist.js
+</code></pre>
+<p>forked from <a href="https://github.com/lagodiuk/decision-tree-js">lagodiuk/decision-tree-js</a></p>
+<p>数据示例（x和y为特征列，color为预测分类）</p>
+<pre><code>{
+    x: 200,
+    y: 100,
+    color: '#FFC508'
+}
+</code></pre>
+<p>但这个例子不是非常纯粹的ID3实现，它对整数值进行了离散化。譬如这里是根据取值把坐标轴的划分为两个区间，每个区间对应同一个特征值的两个取值范围（譬如y&gt;=200和y&lt;200）。这里借鉴了一部分C4.5处理连续值的办法。</p>
+<h2>C4.5(successor of ID3)</h2>
+<p>这个算法也是<a href="http://www.rulequest.com/Personal/">Ross Quinlan</a>提出的，作为对ID3的改进。</p>
+<p>算法过程与ID3算法在宏观上一致。</p>
+<p>改进点：</p>
+<h3>选择特征列是通过信息增益率（而不是熵值）</h3>
+<p>其中，**<a href="https://en.wikipedia.org/wiki/Information_gain_in_decision_trees">信息增益（IG）</a>**指的是计算某一个属性导致的熵值下降的幅度。其计算方法为：</p>
+<pre><code class="language-math">    IG(S,a) = H(S) - H(S|a)
+            = H(S) - (
+                \sum_{v \in vals(a)} \frac{|\{x \in S | x_{a} = v\}|}{|S|} \cdot
+                H({x \in S|x_{a} = v})
+            )
+</code></pre>
+<p>而，**<a href="https://en.wikipedia.org/wiki/Information_gain_ratio">信息增益率（IGR）</a>**则是</p>
+<pre><code class="language-math">    IGR(S,a) = IG(S,a)/IV(S,a)
+</code></pre>
+<p>其中，IV(S,a)的定义为</p>
+<pre><code class="language-math">    IV(S,a) = - \sum_{v \in vals(a)} \frac{|\{x \in S | x_{a} = v\}|}{|S|} \cdot
+            log_{2}(\frac{|\{x \in S | x_{a} = v\}|}{|S|})
+</code></pre>
+<h3>在树构造的过程中剪枝</h3>
+<p>所谓的剪枝，就是用节点的子树或者子叶子节点来替换这个节点，以得到更低的错误率。为解决ID3过度拟合的问题，C4.5的软件包实现了基于悲观剪枝（Pessimistic Pruning）方法的剪枝。</p>
+<p>这个方法通过递归地计算目标节点分支的错误率来获得这个目标节点的错误率。例如，对于一个有N个实例和E个错误（也就是和该叶子节点类别不一致的实例）的叶子节点，用<code>$(E + 0.5)/N$</code>表示这个叶子节点的错误率。假设一个节点有L个子节点，这些子节点共有<code>$\sum E$</code>个错误和<code>$\sum N$</code>个实例，那么该节点的错误率为<code>$(\sum E + 0.5xL)/\sum N$</code>。假设这个节点被它的最佳子节点替代后，在训练集上得到的错误分类数为J，那么如果<code>$(J + 0.5)$</code>在<code>$(\sum E + 0.5xL)$</code>的1标准差范围内，悲观剪枝法就采用这个子节点来替代该节点。</p>
+<h3>处理连续数据</h3>
+<p>选取多决策准则来产生分支。譬如上述可视化的实现中，对连续值x采取了这样的策略：</p>
+<ul>
+<li>对每一个x的取值，把测试集分为(&gt;= x)和(&lt; x)两个分支</li>
+<li>对每一个分支计算信息增益</li>
+</ul>
+<p>不过Quinlan论文中讲到的两个处理连续值的方法比这个复杂。第一个方法是对每一个属性用信息增益率选择阀值，第二个方法是用Risannen的最小描述长度原理（MDL）。</p>
+<h3>处理数据缺失</h3>
+<p>在Quinlan的文献中有很多处理数据缺失的议题，其中比较重点的是三个。这里简单介绍一下问题并且提几个典型的解法。</p>
+<h4>生成树分支的时候需要比较多个属性值，但有些属性在某些实例中没有值</h4>
+<ul>
+<li>直接忽略实例</li>
+<li>填充属性值（常用值、均值或者最能带来信息增益的值等）</li>
+</ul>
+<h4>选定属性后，没有该属性值的实例没有办法放入这个训练的任何输出中</h4>
+<ul>
+<li>直接忽略实例</li>
+<li>选取常用值</li>
+<li>切分用例放到每一个输出下</li>
+</ul>
+<h4>构建好的树测试实例时有可能被测试用例缺失某个测试节点对应的属性值，这时如何让测试进行下去</h4>
+<ul>
+<li>如果对于缺失值有单独分支，走这个分支</li>
+<li>选取最常用分支走</li>
+<li>确定最可能的属性值，并填充这个属性值</li>
+<li>不再走余下分支测试，直接设置成最常用类别</li>
+</ul>
+<h2>扩展阅读</h2>
+<h3>C5.0/See5</h3>
+<h3>CART(Classification and Regression Tree)</h3>
+<p>和C4.5的不同在于：</p>
+<ul>
+<li>CART算法可以不转换的情况下直接处理连续型和标称型数据</li>
+<li>CART算法没有停止准则，树会一直生长到最大尺寸</li>
+<li>CART算法的剪枝步骤采用的是代价复杂度（Cost-Complexity Pruning）</li>
+</ul>
+<h3>多变量树</h3>
+<p>上面讨论的算法都是基于一个输入维度来划分数据的，而构造<strong>多变量树</strong>时每个决策节点都可以使用所有的输入维度，因此更加一般化。当然这个已经超出本文的讨论范围了</p>
+<h3><a href="https://en.wikipedia.org/wiki/Random_forest">随机森林</a></h3>
+<h3><a href="https://en.wikipedia.org/wiki/Gradient_boosting">GBDT</a></h3>
+<h2>附录</h2>
+<h3>参考资料</h3>
+<ul>
+<li><a href="http://www2.cs.uregina.ca/~dbd/cs831/index.html">University of Regina cs831: Knowledge Discovery in Databases</a></li>
+<li><a href="https://en.wikipedia.org/wiki/ID3_algorithm">wiki: ID3_algorithm</a></li>
+<li><a href="http://www.cs.umd.edu/~samir/498/10Algorithms-08.pdf">Top10 data mining algrithms</a></li>
+</ul>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>《机器学习导论》，Ethem Alpaydin著 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+</div>
+</article>
+<div id="loading">
+  <div class="sk-double-bounce">
+    <div class="sk-child sk-double-bounce1"></div>
+    <div class="sk-child sk-double-bounce2"></div>
+  </div>
+</div>
+
+<script src="http://leungwensen.github.io/zfinder/dist/lib/jquery-3.1.0.min.js"></script>
+<script src="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.js"></script>
+</body>
+</html>

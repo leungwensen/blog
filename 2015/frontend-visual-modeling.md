@@ -6,11 +6,19 @@
 
 单页面应用已经不是新鲜词汇，而利用html5开发离线应用、native应用的技术方案也越来越流行。因而在前端做类似的可视化建模的需求和解决方案也越来越多。举个离我们比较近的例子：ACP里就用到流程图表示工作流程和状态。
 
-```graph-LR
-  a[开始]-->b[审批中]
-  b-->c[已审批]
-  c-->d[已配置]
-  d-->e[结束]
+```viz-dot
+digraph validatingFlow {
+  rankdir="LR";
+  a[label="开始"];
+  b[label="审批中"];
+  c[label="已审批"];
+  d[label="已配置"];
+  e[label="结束"];
+  a->b
+  b->c
+  c->d
+  d->e
+}
 ```
 
 当然，具体产品线里有更复杂的例子。譬如我们团队的[PAI][pai]使用DAG来描述数据挖掘的过程。
@@ -25,13 +33,20 @@
 
 即实现如下图的可视化建模系统。
 
-```graph-TB
-  subgraph 前端可视化建模系统
-    a[数据结构] -->|渲染| b[可视化图形]
-    b --> c[用户交互]
-    b -->|转换| a
-    c --> b
-  end
+```viz-dot
+digraph modeling {
+  labelloc="t"
+  label="前端可视化建模系统"
+  
+  a[label="数据结构"];
+  b[label="可视化图形"];
+  c[label="用户交互"];
+  
+  a -> b [label="渲染"];
+  b -> c
+  b -> a [label="转换"];
+  c -> b
+}
 ```
 
 ## 分析
@@ -77,44 +92,11 @@
 
 下面介绍几个在实现可视化建模时可供使用或者借鉴的项目。
 
-```css-
-.demo {
-  background-color: #f7f7f7;
-  width: 100% !important;
-  height: 360px;
-  margin-bottom: 20px;
-}
-.demo svg {
-  width: auto !important;
-  margin: 0 auto !important;
-  display: block;
-}
-```
-
-```js-
-require = define = undefined;
-```
-
 ### mxGraph
 
 这个商业产品是上述提到的可视化建模产品里最强大的一个。从05年立项至今，这个库开发时间已有十年。而它的前身JGraph立项时间更早，是2000年。虽然开发模式落后（还是绑定全局变量的方式）、体积庞大，但mxGraph的设计、功能、文档各个方面都难以挑剔。前端可视化建模的标杆作品[draw.io][draw-io]以及中文作图社区[ProcessOn][process-on]都是基于这个库的。基本上目前mxGraph能做到的，就是前端可视化建模能做到的。
 
-下面是mxGraph一个demo。
-
-```html+
-<div id="mx-graph-demo" class="demo"></div>
-```
-
-```js+
-var mxBasePath = '../lib/mxGraph';
-```
-
-```script+
-../lib/mxGraph/js/mxClient.js
-./frontend-visual-modeling/mxGraph/folding.js
-```
-
-代码：[folding.js](./frontend-visual-modeling/mxGraph/folding.js)
+[demo: folding](https://jgraph.github.io/mxgraph/javascript/examples/folding.html)。
 
 ### Joint
 
@@ -131,55 +113,13 @@ Joint作为rapid的社区版（开源版本）功能并不全面，很多时候�
 
 即便如此，Joint也算是可视化建模的开源库里最灵活、设计最优秀的库了。
 
-下面是Joint的一个demo。
-
-```html+
-<div id="joint-demo" class="demo"></div>
-```
-
-```link+
-../lib/joint/joint.min.css
-```
-
-```script+
-../lib/jquery/jquery.min.js
-../lib/lodash/lodash.min.js
-../lib/backbone/backbone-min.js
-../lib/joint/joint.min.js
-./frontend-visual-modeling/joint/petri-nets.js
-```
-
-代码：[petri-nets.js](./frontend-visual-modeling/joint/petri-nets.js)
+[demo: petri nets](http://www.jointjs.com/demos/pn)。
 
 ### jsPlumb
 
 jsPlumb采用的是svg和html混排的做法，把所有节点都是html，所有连线都是单独的svg节点包裹的path元素。这么做的好处是主要是可以兼容低版本浏览器，并且节点可以充分利用css进行定制。缺点也很明显，首先文档结构散乱，很难导出、转换，其次画出来的图总有莫名的违和感，感觉是像素图形和矢量图形生硬地放到了一起，再次，一旦css在js之后加载完成，jsPlumb的图就崩溃了，而jsPlumb的css也是有侵入性的。
 
-下面是jsPlumb的一个demo。
-
-```html+
-<div class="demo jsPlumb-demo statemachine-demo" id="statemachine-demo">
-    <div class="w" id="opened">BEGIN<div class="ep"></div></div>
-    <div class="w" id="phone1">PHONE INTERVIEW 1<div class="ep"></div></div>
-    <div class="w" id="phone2">PHONE INTERVIEW 2<div class="ep"></div></div>
-    <div class="w" id="inperson">IN PERSON<div class="ep"></div></div>
-    <div class="w" id="rejected">REJECTED<div class="ep"></div></div>
-</div>
-```
-
-```link+
-../lib/jsPlumb/dist/css/jsplumb.css
-./frontend-visual-modeling/jsPlumb/state-machine.css
-./frontend-visual-modeling/jsPlumb/style-fix.css
-```
-
-```script+
-../lib/jquery/jquery-ui.min.js
-../lib/jsPlumb/dist/js/jquery.jsPlumb.min.js
-./frontend-visual-modeling/jsPlumb/state-machine.js
-```
-
-代码：[state-machine.js](./frontend-visual-modeling/jsPlumb/state-machine.js)
+[demo: state machine](https://jsplumbtoolkit.com/community/demo/statemachine/index.html)。
 
 ### Alloy-UI diagrams-builder
 
@@ -189,20 +129,7 @@ jsPlumb采用的是svg和html混排的做法，把所有节点都是html，所�
 
 ### 常用前端可视化建模工具对比
 
-```html-
-<div id="radar" class="demo"></div>
-```
-
-```css-
-#radar.demo {
-  height: 500px;
-}
-```
-
-```script-
-../lib/echarts/echarts.min.js
-./frontend-visual-modeling/radar.js
-```
+![radar](./frontend-visual-modeling/radar.png)
 
 以上雷达图对比的是比较成规模的，可以独立完成可视化建模的工具库。
 

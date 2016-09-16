@@ -24,4 +24,3 @@ ISBN | 9787121250958
 
 * [电子工业出版社](http://www.phei.com.cn/module/goods/wssd_content.jsp?bookid=42142)
 * [豆瓣](http://book.douban.com/subject/26340523/)
-

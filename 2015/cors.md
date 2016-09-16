@@ -125,15 +125,9 @@ xhr.send();
 
 ### 完整示例
 
-下面是一个CORS请求的完整示例。运行示例就可以在浏览器控制台的network栏看到一个真实的请求信息。
+下面是一个CORS请求的完整示例。运行下列代码就可以在浏览器控制台的network栏看到一个真实的请求信息。
 
-```html-
-<div style="text-align: center; margin: 20px;">
-    <button class="btn" onclick="makeCorsRequest(); return false;">执行示例代码</button>
-</div>
-```
-
-```javascript+
+```javascript
 // Create the XHR object.
 function createCORSRequest(method, url) {
   var xhr = new XMLHttpRequest();
@@ -180,6 +174,8 @@ function makeCorsRequest() {
 
   xhr.send();
 }
+
+makeCorsRequest();
 ```
 
 ## 服务器端配置CORS
@@ -481,73 +477,9 @@ Chrome插件有两种不同的方法支持跨域请求：
 
 ## CORS服务器流程图
 
-下面的流程图展示了服务器添加CORS响应头信息的决策过程。点击链接查看大图[^footnote-3]。
+下面的流程图展示了服务器添加CORS响应头信息的决策过程。
 
-[原图链接](http://www.html5rocks.com/static/images/cors_server_flowchart.png)
-
-
-CORS服务器流程图
-
-```flowchart
-cond1=>condition: 请求是否有Origin头?
-cond2=>condition: HTTP方法是否是
-OPTIONS?
-cond3=>condition: 是否有
-Access-Control-Request-Method
-头?
-cond4=>condition: 响应头需不需要
-暴露给客户端?
-cond5=>condition: Access-Control-Request-Method
-头是否合法?
-cond6=>condition: 请求是否有
-Access-Control-Request-Header
-头?
-cond7=>condition: Access-Control-Request-Header
-头是否合法?
-cond8=>condition: 是否允许cookies?
-cond9=>condition: 是否是preflight请求?
-e1=>end: 非法CORS请求|rejected
-e2=>end: 非法preflight请求|rejected
-e3=>end: 返回HTTP200响应，无响应内容|approved
-e4=>end: 继续处理响应|approved
-sub1=>subroutine: 真实请求
-sub2=>subroutine: preflight请求
-op1=>operation: 设置
-Access-Control-Expose-Headers
-响应头
-op2=>operation: 设置
-Access-Control-Allow-Methods
-响应头
-op3=>operation: 设置
-Access-Control-Allow-Headers
-响应头
-op4=>operation: (可选)设置
-Access-Control-Max-Age
-响应头
-op5=>operation: 设置
-Access-Control-Allow-Origin
-响应头
-op6=>operation: 设置
-Access-Control-Allow-Credentials
-响应头
-
-cond1(no)->e1
-cond1(yes)->cond2
-cond2(no)->sub1
-cond2(yes)->cond3
-cond3(no)->sub1(bottom)->cond4(yes)->op1(bottom)->op5(bottom)->cond8
-cond3(yes)->sub2(bottom)->cond5
-cond5(no)->e2
-cond5(yes)->cond6
-cond6(yes)->cond7
-cond6(no)->op2
-cond7(no)->e2
-cond7(yes)->op2(bottom)->op3(bottom)->op4(bottom)->op5
-cond8(yes)->op6(bottom)->cond9
-cond8(no)->cond9
-cond9(yes)->e3
-cond9(no)->e4
-```
+![原图链接](./cors/cors_server_flowchart.png)
 
 ## CORS和图片
 
@@ -578,8 +510,5 @@ MDN上面有相关的实现细节：[CORS-enabled Image](https://developer.mozil
 
 [^footnote-1]: 浏览器中的js对象，已被W3C组织标准化。用于与服务器进行通信，是web2.0的核心－[ajax技术][ajax]的基础。
 [^footnote-2]: 译者注：W3C的标准里只对简单跨域请求作出定义，凡是不符合简单请求定义的跨域请求都是“默认的”、“普通的”请求。
-[^footnote-3]: 译者注：这里是用[flowchart.js](https://github.com/adrai/flowchart.js)的语法写的图，和原图结构有差异，但逻辑一致。
 
 [ajax]: https://en.wikipedia.org/wiki/Ajax_(programming)
-
-

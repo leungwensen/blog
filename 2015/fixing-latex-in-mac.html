@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="Content-Type" name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Mac下使用latex遇到的问题以及解法</title>
+
+  <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/lib/github-markdown-2.3.0.min.css">
+  <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.css">
+</head>
+<body>
+<nav id="toc">
+  <div id="toc-body" class="toc-body"></div>
+</nav>
+<article id="markdown">
+  <div id="markdown-body" class="markdown-body"><h1>Mac下使用latex遇到的问题以及解法</h1>
+<h2>字体</h2>
+<pre><code class="language-shell">The font &quot;[SIMKAI.TTF]&quot; cannot be found.
+</code></pre>
+<ul>
+<li>安装MacTex以及相关包；</li>
+<li>文档里有以下几个设置：</li>
+</ul>
+<pre><code class="language-tex"><span class="hljs-comment">% !TEX program = XeLaTeX</span>
+<span class="hljs-comment">% !TEX encoding = UTF-8</span>
+<span class="hljs-tag">\<span class="hljs-name">documentclass</span><span class="hljs-string">[UTF8,nofonts]</span><span class="hljs-string">{ctexart}</span></span> <span class="hljs-comment">% 关键是nofonts参数，保证编译文章时不会去找奇怪的win字体</span>
+
+<span class="hljs-comment">% 把字体设置成mac预装好的字体 {</span>
+    <span class="hljs-tag">\<span class="hljs-name">setCJKmainfont</span><span class="hljs-string">[BoldFont=STHeiti,ItalicFont=STKaiti]</span><span class="hljs-string">{STSong}</span></span>
+    <span class="hljs-tag">\<span class="hljs-name">setCJKsansfont</span><span class="hljs-string">[BoldFont=STHeiti]</span><span class="hljs-string">{STXihei}</span></span>
+    <span class="hljs-tag">\<span class="hljs-name">setCJKmonofont</span><span class="hljs-string">{STFangsong}</span></span>
+<span class="hljs-comment">% }</span>
+
+<span class="hljs-tag">\<span class="hljs-name">begin</span><span class="hljs-string">{document}</span></span>
+    文章内容。
+<span class="hljs-tag">\<span class="hljs-name">end</span><span class="hljs-string">{document}</span></span>
+</code></pre>
+<h2>文档类型设置</h2>
+<p>直接按照以下最佳实践编写文档</p>
+<h3>书籍</h3>
+<pre><code class="language-tex"><span class="hljs-comment">%!TEX program = XeLaTeX</span>
+<span class="hljs-comment">%!TEX encoding = UTF-8 Unicode</span>
+<span class="hljs-tag">\<span class="hljs-name">documentclass</span><span class="hljs-string">[cs4size,a4paper,fancyhdr,fntef,UTF8,nofonts,hyperref]</span><span class="hljs-string">{ctexbook}</span></span> <span class="hljs-comment">%文档类别</span>
+<span class="hljs-comment">%Packages {</span>
+    <span class="hljs-comment">%latex 宏包 {</span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">[top=1in,bottom=1in,left=1.25in,right=1.25in]</span><span class="hljs-string">{geometry}</span></span>
+        <span class="hljs-comment">%\usepackage{algorithmic}</span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{amsmath}</span></span> <span class="hljs-comment">%math!</span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{float}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{fontspec}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{hyperref}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{indentfirst}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{ifthen}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{makeidx}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{paralist}</span></span> <span class="hljs-comment">%行内列表</span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{pgffor}</span></span>
+        <span class="hljs-comment">%\usepackage{zhspacing}</span>
+    <span class="hljs-comment">%}</span>
+    <span class="hljs-comment">%自定义宏包 {</span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{package/translation}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{package/variable}</span></span>
+    <span class="hljs-comment">%}</span>
+<span class="hljs-comment">%}</span>
+<span class="hljs-comment">%settrings {</span>
+    <span class="hljs-comment">%字体 {</span>
+        <span class="hljs-tag">\<span class="hljs-name">setCJKmainfont</span><span class="hljs-string">[BoldFont=STHeiti,ItalicFont=STKaiti]</span><span class="hljs-string">{STSong}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">setCJKsansfont</span><span class="hljs-string">[BoldFont=STHeiti]</span><span class="hljs-string">{STXihei}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">setCJKmonofont</span><span class="hljs-string">{STFangsong}</span></span>
+        <span class="hljs-comment">%\zhspacing{}</span>
+    <span class="hljs-comment">%}</span>
+    <span class="hljs-comment">%样式 {</span>
+        <span class="hljs-comment">%\pagestyle{plain} %在页脚正中显示页码</span>
+        <span class="hljs-tag">\<span class="hljs-name">pagestyle</span><span class="hljs-string">{fancy}</span></span>
+    <span class="hljs-comment">%}</span>
+    <span class="hljs-comment">%信息 {</span>
+        <span class="hljs-tag">\<span class="hljs-name">author</span><span class="hljs-string">{\varauthor}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">title</span><span class="hljs-string">{\vartitle\\\varsubtitle}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">date</span><span class="hljs-string">{}</span></span>
+    <span class="hljs-comment">%}</span>
+<span class="hljs-comment">%}</span>
+<span class="hljs-comment">%制作index {</span>
+    <span class="hljs-tag">\<span class="hljs-name">makeindex</span></span>
+<span class="hljs-comment">%}</span>
+<span class="hljs-tag">\<span class="hljs-name">begin</span><span class="hljs-string">{document}</span></span>
+    <span class="hljs-tag">\<span class="hljs-name">frontmatter</span><span class="hljs-string">{}</span></span> <span class="hljs-comment">%封面相关</span>
+    <span class="hljs-comment">%封面 {</span>
+        <span class="hljs-comment">%\include{cover}</span>
+    <span class="hljs-comment">%}</span>
+    <span class="hljs-comment">%作者 profile {</span>
+        <span class="hljs-comment">%\include{author}</span>
+    <span class="hljs-comment">%}</span>
+    <span class="hljs-comment">%序言 {</span>
+        <span class="hljs-comment">%\include{preface}</span>
+    <span class="hljs-comment">%}</span>
+    <span class="hljs-comment">%目录 {</span>
+        <span class="hljs-tag">\<span class="hljs-name">begin</span><span class="hljs-string">{small}</span></span> <span class="hljs-comment">% 使用小字体</span>
+            <span class="hljs-tag">\<span class="hljs-name">tableofcontents</span></span> <span class="hljs-comment">% 不能加{}，否则会输出空目录</span>
+        <span class="hljs-tag">\<span class="hljs-name">end</span><span class="hljs-string">{small}</span></span>
+    <span class="hljs-comment">%}</span>
+    <span class="hljs-tag">\<span class="hljs-name">mainmatter</span><span class="hljs-string">{}</span></span> <span class="hljs-comment">%正文</span>
+    <span class="hljs-comment">%章节 {</span>
+        <span class="hljs-tag">\<span class="hljs-name">begin</span><span class="hljs-string">{normalsize}</span></span>
+            章节内容
+        <span class="hljs-tag">\<span class="hljs-name">end</span><span class="hljs-string">{normalsize}</span></span>
+    <span class="hljs-comment">%}</span>
+    <span class="hljs-tag">\<span class="hljs-name">backmatter</span><span class="hljs-string">{}</span></span> <span class="hljs-comment">%背页</span>
+    <span class="hljs-comment">%版权页 {</span>
+        <span class="hljs-comment">%\include{copyright}</span>
+    <span class="hljs-comment">%}</span>
+    <span class="hljs-comment">%使用 index {</span>
+        <span class="hljs-tag">\<span class="hljs-name">appendix</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">printindex</span></span>
+    <span class="hljs-comment">%}</span>
+<span class="hljs-tag">\<span class="hljs-name">end</span><span class="hljs-string">{document}</span></span>
+</code></pre>
+<h3>论文、其它文章</h3>
+<pre><code class="language-tex"><span class="hljs-comment">%!TEX program = XeLaTeX</span>
+<span class="hljs-comment">%!TEX encoding = UTF-8 Unicode</span>
+<span class="hljs-tag">\<span class="hljs-name">documentclass</span><span class="hljs-string">[UTF8,nofonts]</span><span class="hljs-string">{ctexart}</span></span> <span class="hljs-comment">% 文档类别</span>
+<span class="hljs-comment">% Packages {</span>
+    <span class="hljs-comment">% latex 宏包 {</span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">[top=1in,bottom=1in,left=1.25in,right=1.25in]</span><span class="hljs-string">{geometry}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{float}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{fontspec}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{hyperref}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{indentfirst}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{makeidx}</span></span>
+        <span class="hljs-comment">%\usepackage{zhspacing}</span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{multicol}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">usepackage</span><span class="hljs-string">{multirow}</span></span>
+    <span class="hljs-comment">%}</span>
+<span class="hljs-comment">%}</span>
+<span class="hljs-comment">% settings {</span>
+    <span class="hljs-comment">% 字体 {</span>
+        <span class="hljs-tag">\<span class="hljs-name">setCJKmainfont</span><span class="hljs-string">[BoldFont=STHeiti,ItalicFont=STKaiti]</span><span class="hljs-string">{STSong}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">setCJKsansfont</span><span class="hljs-string">[BoldFont=STHeiti]</span><span class="hljs-string">{STXihei}</span></span>
+        <span class="hljs-tag">\<span class="hljs-name">setCJKmonofont</span><span class="hljs-string">{STFangsong}</span></span>
+        <span class="hljs-comment">%\zhspacing{}</span>
+    <span class="hljs-comment">%}</span>
+    <span class="hljs-comment">% 样式 {</span>
+        <span class="hljs-tag">\<span class="hljs-name">pagestyle</span><span class="hljs-string">{plain}</span></span> <span class="hljs-comment">% 在页脚正中显示页码</span>
+    <span class="hljs-comment">%}</span>
+    <span class="hljs-tag">\<span class="hljs-name">title</span><span class="hljs-string">{出版许可协议书}</span></span>
+    <span class="hljs-tag">\<span class="hljs-name">author</span><span class="hljs-string">{}</span></span>
+    <span class="hljs-tag">\<span class="hljs-name">date</span><span class="hljs-string">{}</span></span>
+<span class="hljs-comment">%}</span>
+<span class="hljs-comment">% 制作index {</span>
+    <span class="hljs-tag">\<span class="hljs-name">makeindex</span></span>
+<span class="hljs-comment">%}</span>
+<span class="hljs-tag">\<span class="hljs-name">begin</span><span class="hljs-string">{document}</span></span>
+    <span class="hljs-tag">\<span class="hljs-name">maketitle</span></span>
+    <span class="hljs-tag">\<span class="hljs-name">renewcommand</span><span class="hljs-string">{\contentsname}</span><span class="hljs-string">{目录}</span></span>
+    <span class="hljs-tag">\<span class="hljs-name">tableofcontents</span></span>
+    文章内容
+<span class="hljs-tag">\<span class="hljs-name">end</span><span class="hljs-string">{document}</span></span>
+</code></pre>
+</div>
+</article>
+<div id="loading">
+  <div class="sk-double-bounce">
+    <div class="sk-child sk-double-bounce1"></div>
+    <div class="sk-child sk-double-bounce2"></div>
+  </div>
+</div>
+
+<script src="http://leungwensen.github.io/zfinder/dist/lib/jquery-3.1.0.min.js"></script>
+<script src="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.js"></script>
+</body>
+</html>

@@ -1,12 +1,12 @@
-
-# git二三事
+git二三事
+========
 
 ## 概述
 
 git伴随着linux内核开源项目而诞生。linux内核项目在91年到02年之间的版本管理非常原始，很多时候是贡献者把patch文件通过邮件发送给Linus本人，然后由Linus手工合并。02年之后，有个商业公司为这个项目免费提供了分布式版本管理系统BitKeeper，从此项目组在版本管理方面的效率有所提升。然而在05年的时候，有成员违反了BitKeeper提供者和Linux内核开发团队之间的协议，而Linus的应对不是带着项目成员道歉，而是花了两个星期写出来git的原型。git在BitKeeper的使用权限被收回后迅速接替，成为linux内核代码的版本控制系统。
 
-```shell
-    $ man git
+```bash
+$ man git
 ```
 
 大家可以去看看[git项目的第一个commit][first-commit-of-git]。git的描述是`git - the stupid content tracker`，这其中也许有项目最初带着的怨气，但的确如描述一样，对linux系开发者来说是非常“傻瓜式”的版本控制系统。
@@ -74,8 +74,8 @@ svn每建一个分支就是拷贝代码生成一个新的目录。而git建一�
 
 大家可以通过这个命令去确认一下：
 
-```
-    $ less $path/to/a/git-repo/.git/refs/heads/master
+```bash
+$ less $path/to/a/git-repo/.git/refs/heads/master
 ```
 
 ### 团队协作
@@ -98,8 +98,8 @@ svn每建一个分支就是拷贝代码生成一个新的目录。而git建一�
 
 #### mac
 
-```
-    $ brew install git
+```bash
+$ brew install git
 ```
 
 #### windows
@@ -108,9 +108,9 @@ svn每建一个分支就是拷贝代码生成一个新的目录。而git建一�
 
 #### linux
 
-```
-    $ yum install git-core
-    $ apt-get install git-core
+```bash
+$ yum install git-core
+$ apt-get install git-core
 ```
 
 ### GUI
@@ -126,15 +126,15 @@ svn每建一个分支就是拷贝代码生成一个新的目录。而git建一�
 
 在git的代码目录下有一个专门做自动补全的文件夹。
 
-```
-    git/contrib/completion
+```bash
+git/contrib/completion
 ```
 
 ### 全局配置
 
 全局配置可以通过命令行，也可以通过直接改文件。
 
-```
+```bash
 .gitconf:
 
     [user]
@@ -171,30 +171,30 @@ svn每建一个分支就是拷贝代码生成一个新的目录。而git建一�
 
 修改某一个单项的方法：
 
-```
-    git config --global user.name yourname
+```bash
+$ git config --global user.name yourname
 ```
 
 用户区一定要配置，添加别名也可以显著提升效率。
 
 另一个全局配置文件是 `.gitignore` 这个文件的作用是指定哪些路径或者文件不纳入版本控制。例子：
 
-```
-    .*.cfg
-    .DS_Store
-    .config
-    .dat*
-    .grunt
-    .last_cover_stats
-    .lock-wscript
-    .repl_history
-    .rvmrc
-    Build.bat
-    MANIFEST.bak
-    META.json
-    META.yml
-    MYMETA.*
-    coverage
+```bash
+.*.cfg
+.DS_Store
+.config
+.dat*
+.grunt
+.last_cover_stats
+.lock-wscript
+.repl_history
+.rvmrc
+Build.bat
+MANIFEST.bak
+META.json
+META.yml
+MYMETA.*
+coverage
 ```
 
 ## 几个概念
@@ -213,8 +213,8 @@ svn每建一个分支就是拷贝代码生成一个新的目录。而git建一�
 
 可以试着执行这个命令看看：
 
-```
-    $ git status
+```bash
+$ git status
 ```
 
 `Untracked files:`这个类目下的，就是未入库文件；
@@ -230,8 +230,8 @@ svn每建一个分支就是拷贝代码生成一个新的目录。而git建一�
 
 commit完成之后，就是已提交状态，这时会有类似这样的提示：
 
-```
-    Your branch is ahead of 'origin/dev' by 1 commit.
+```bash
+Your branch is ahead of 'origin/dev' by 1 commit.
 ```
 
 这个表示有已经提交的变更，但未和远程同步。
@@ -244,8 +244,8 @@ commit完成之后，就是已提交状态，这时会有类似这样的提示�
 
 事实上一个分支就是一个文件，这个文件里保存着一个commit的hash码。譬如：
 
-```
-    $ less $path/to/a/git-repo/.git/refs/heads/master
+```bash
+$ less $path/to/a/git-repo/.git/refs/heads/master
 ```
 
 这个文件没有别的内容，只有一个hash码。
@@ -253,7 +253,7 @@ commit完成之后，就是已提交状态，这时会有类似这样的提示�
 而git所谓的切换分支是怎么回事呢？.git文件夹下有一个HEAD文件，这个文件的内容如下：
 
 ```
-     ref: refs/heads/dev
+ref: refs/heads/dev
 ```
 
 内容很简洁易懂，就是一个指向dev分支的指针。HEAD指向哪个分支，我们当前就处于哪个分支。
@@ -270,34 +270,34 @@ HEAD^^ (HEAD^2)(HEAD~2) | 第三新的commit
 
 以下是一些常用的命令：
 
-```
-    $ git clone       # 克隆版本库
-    $ git fetch       # 同步远程版本库状态
-    $ git pull        # 同步当前分支并检出最新commit
-    $ git log         # 查看历史
-    $ git diff        # 查看差分
-    $ git checkout    # 签出分支｜commit｜tag等
-    $ git checkout -b # 新建分支
-    $ git branch -d   # 删除分支
-    $ git add         # 把文件或目录加入版本哭或者把变更加入到staged列表
-    $ git add -A      # 把所有untracked或者unstaged的文件或变更都加到staged列表
-    $ git rm          # 把文件或者目录移出版本库
-    $ git reset       # 把staged中的文件或者变更恢复到之前的状态
-    $ git revert      # 回滚到某一个commit
-    $ git stash       # 把所有uncommited的内容保存到缓存区域（.git/refs/stash）
-    $ git commit      # 生成commit
-    $ git merge       # 合并分支｜commit等
-    $ git rebase      # “重新基于”一个分支
-    $ git tag         # 添加标签（tag）
-    $ git push        # 推送到远程版本库
-    $ git push -u     # 推送新分支
-    $ git config      # 配置
+```bash
+$ git clone       # 克隆版本库
+$ git fetch       # 同步远程版本库状态
+$ git pull        # 同步当前分支并检出最新commit
+$ git log         # 查看历史
+$ git diff        # 查看差分
+$ git checkout    # 签出分支｜commit｜tag等
+$ git checkout -b # 新建分支
+$ git branch -d   # 删除分支
+$ git add         # 把文件或目录加入版本哭或者把变更加入到staged列表
+$ git add -A      # 把所有untracked或者unstaged的文件或变更都加到staged列表
+$ git rm          # 把文件或者目录移出版本库
+$ git reset       # 把staged中的文件或者变更恢复到之前的状态
+$ git revert      # 回滚到某一个commit
+$ git stash       # 把所有uncommited的内容保存到缓存区域（.git/refs/stash）
+$ git commit      # 生成commit
+$ git merge       # 合并分支｜commit等
+$ git rebase      # “重新基于”一个分支
+$ git tag         # 添加标签（tag）
+$ git push        # 推送到远程版本库
+$ git push -u     # 推送新分支
+$ git config      # 配置
 ```
 
 具体的用法可以这样看
 
-```
-    $ man git
+```bash
+$ man git
 ```
 
 也可以在线查看[progit][progit]。
@@ -306,51 +306,51 @@ HEAD^^ (HEAD^2)(HEAD~2) | 第三新的commit
 
 * 查看所有分支
 
-```
-    $ git branch    # 本地
-    $ git branch -r # 远程
+```bash
+$ git branch    # 本地
+$ git branch -r # 远程
 ```
 
 * 查看2次log
 
-```
-    $ git log -2
+```bash
+$ git log -2
 ```
 
 * 查看当前分支比和other分支差异的commit
 
-```
-    $ git log other..  # 当前分支比other分支多了哪些commit
-    $ git log ..other  # other分支比当前分支多了哪些commit
+```bash
+$ git log other..  # 当前分支比other分支多了哪些commit
+$ git log ..other  # other分支比当前分支多了哪些commit
 ```
 
 * 热切换分支之前和之后可以用stash子命令来缓存和恢复工作状态
 
-```
-    $ git stash       # 缓存
-    $ git stash apply # 恢复
-    $ git stash list  # 查看缓存列表
+```bash
+$ git stash       # 缓存
+$ git stash apply # 恢复
+$ git stash list  # 查看缓存列表
 ```
 
 * 强制覆盖远程分支 ***注意，只用于恢复代码***
 
-```
-    $ git push -f
+```bash
+$ git push -f
 ```
 
 * 删除远程分支
 
-```
-    $ git push origin --delete <branchName>
-    $ git push origin :<branchName>
+```bash
+$ git push origin --delete <branchName>
+$ git push origin :<branchName>
 ```
 
 * 删除远程tag
 
-```
-    $ git push origin --delete tag <tagname>
-    $ git tag -d <tagname>
-    $ git push origin :refs/tags/<tagname>
+```bash
+$ git push origin --delete tag <tagname>
+$ git tag -d <tagname>
+$ git push origin :refs/tags/<tagname>
 ```
 
 ## 工作流程
@@ -410,8 +410,8 @@ github这个聚拢了巨量软件开发人员的开源社区之所以取得成�
 
 救火救场请用
 
-```
-    $ git filter-branch -f --env-filter
+```bash
+$ git filter-branch -f --env-filter
 ```
 
 或者直接报警 [警察叔叔就是这个人][blamehim]
