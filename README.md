@@ -28,7 +28,7 @@
 ```shell
 git clone https://github.com/leungwensen/blog.git $path/to/blog
 npm install zfinder -g
-zfinder serve -o $path/to/blog
+zfinder serve $path/to/blog
 ```
 
 更多zfinder相关信息: [zfinder](https://github.com/zfinder)
