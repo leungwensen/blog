@@ -33,8 +33,4 @@ zfinder serve -o $path/to/blog
 
 更多zfinder相关信息: [zfinder](https://github.com/zfinder)
 
-## markdown文法相关
-
-参考[marked-plus-renderer: features](http://leungwensen.github.io/marked-plus-renderer/demo/features.html)
-
-*powered by [zfinder](https://github.com/zfinder)*
+*built by [zfinder](https://github.com/leungwensen/zfinder)*
