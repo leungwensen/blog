@@ -23,7 +23,10 @@
         "type": "git",
         "url": "git@github.com:leungwensen/blog.git"
     },
-    "scripts": {},
+    "scripts": {
+        "build": "zfinder build",
+        "start": "zfinder serve"
+    },
     "dependencies": {},
     "devDependencies": {
         "zfinder": "^0.2.2"
