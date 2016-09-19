@@ -1,4 +1,5 @@
-# SocialCalc
+SocialCalc
+==========
 
 电子表格（spreadsheets）的历史已经超过30年。第一个电子表格软件[VisiCalc](https://en.wikipedia.org/wiki/VisiCalc)由[Dan Bricklin](http://danbricklin.com/)于1978年设计，并于1979年问世。其原始理念非常直截了当：就是一个可以向两个维度无限延展的表格，表格中的每一个单元格可以由文字、数字或者公式组成。公式可以是运算符或者一些内置函数的组合，并且每一个公式都可以访问到其它单元格的当前值。
 
@@ -466,10 +467,9 @@ Socialtext为SocialCalc创造了Common Public Attribution License[^cpal]协议�
 
 项目 | 内容
 ---- | ----
-原文链接 | [http://www.aosabook.org/en/socialcalc.html](http://www.aosabook.org/en/socialcalc.html)
 原文作者 | [Audrey Tang](https://github.com/audreyt)
-本文链接 | [http://blog.leungwensen.com/2016/socialcalc.md](http://blog.leungwensen.com/2016/socialcalc.md)
-
+原文链接 | http://www.aosabook.org/en/socialcalc.html
+本文链接 | http://leungwensen.github.io/blog/2016/socialcalc.html
 
 如果发现翻译问题，欢迎反馈：[leungwensen@gmail.com](mailto:leungwensen@gmail.com)
 

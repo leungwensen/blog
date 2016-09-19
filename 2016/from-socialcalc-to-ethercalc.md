@@ -1,5 +1,5 @@
-
-# 从SocialCalc到EtherCalc
+从SocialCalc到EtherCalc
+=======================
 
 [EtherCalc](https://ethercalc.net/)是一个在线电子表格系统，它专注于在线协作编辑，使用SocialCalc作为浏览器端的电子表格引擎。SocialCalc由Dan Bricklin（电子表格的发明人）设计，是Socialtext平台的一部分。Socialtext是面向商业用户的协同工作平台。
 
@@ -245,11 +245,9 @@ Fred Brooks在他的著作*《设计原本》*中说到，约束可以压缩设�
 
 项目 | 内容
 ---- | ----
-原文链接 | [http://aosabook.org/en/posa/from-socialcalc-to-ethercalc.html](http://aosabook.org/en/posa/from-socialcalc-to-ethercalc.html)
 原文作者 | [Audrey Tang](https://github.com/audreyt)
-本文链接 | [http://blog.leungwensen.com/2016/from-socialcalc-to-ethercalc.md](http://blog.leungwensen.com/2016/from-socialcalc-to-ethercalc.md)
-相关文档 | [SocialCalc(译文)](http://blog.leungwensen.com/2016/socialcalc.md)
-
+原文链接 | http://aosabook.org/en/posa/from-socialcalc-to-ethercalc.html
+本文链接 | http://leungwensen.github.io/blog/2016/from-socialcalc-to-ethercalc.html
+相关文档 | http://leungwensen.github.io/blog/2016/socialcalc.html
 
 如果发现翻译问题，欢迎反馈：[leungwensen@gmail.com](mailto:leungwensen@gmail.com)
-

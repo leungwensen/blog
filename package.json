@@ -1,31 +1,31 @@
 {
-  "name": "leungwensen-blog",
-  "title": "leungwensen's blog",
-  "description": "leungwensen's blog",
-  "homepage": "http://blog.leungwensen.com/",
-  "version": "0.1.0",
-  "author": {
-    "description": "leungwensen@gmail.com",
-    "url": "http://leungwensen.com"
-  },
-  "bugs": {
-    "url": "https://github.com/leungwensen/blog/issues"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "zfinder": "^0.2.0"
-  },
-  "engines": {
-    "node": ">=0.8.0"
-  },
-  "keywords": [
-    "leungwensen",
-    "blog"
-  ],
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:leungwensen/blog.git"
-  },
-  "scripts": {}
+    "name": "leungwensen-blog",
+    "title": "leungwensen's blog",
+    "description": "leungwensen's blog",
+    "homepage": "http://blog.leungwensen.com/",
+    "version": "0.1.0",
+    "author": {
+        "description": "leungwensen@gmail.com",
+        "url": "http://leungwensen.com"
+    },
+    "bugs": {
+        "url": "https://github.com/leungwensen/blog/issues"
+    },
+    "engines": {
+        "node": ">=0.8.0"
+    },
+    "keywords": [
+        "leungwensen",
+        "blog"
+    ],
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:leungwensen/blog.git"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "devDependencies": {
+        "zfinder": "^0.2.2"
+    }
 }

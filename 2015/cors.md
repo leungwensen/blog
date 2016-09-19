@@ -1,4 +1,5 @@
-# 使用CORS
+使用CORS
+========
 
 ## 简介
 
@@ -499,12 +500,9 @@ MDN上面有相关的实现细节：[CORS-enabled Image](https://developer.mozil
 
 项目 | 内容
 ---- | ----
-原文链接     | [http://www.html5rocks.com/en/tutorials/cors/](http://www.html5rocks.com/en/tutorials/cors/)
-原文作者     | [Monsur Hossain](http://www.html5rocks.com/en/profiles/#monsurhossain)
-原文发布日期 | October 26th, 2011
-原文更新日期 | October 29th, 2013
-本文链接     | [http://blog.leungwensen.com/2015/cors.md](http://blog.leungwensen.com/2015/cors.md)
-
+原文作者 | [Monsur Hossain](http://www.html5rocks.com/en/profiles/#monsurhossain)
+原文链接 | http://www.html5rocks.com/en/tutorials/cors/
+本文链接 | http://leungwensen.github.io/blog/2015/cors.html
 
 如果发现翻译问题，欢迎反馈：[leungwensen@gmail.com](mailto:leungwensen@gmail.com)
 
