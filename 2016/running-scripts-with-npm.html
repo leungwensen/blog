@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="Content-Type" name="viewport" content="width=device-width, initial-scale=1"/>
+<title>用npm执行脚本</title>
+
+  <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/lib/github-markdown-2.3.0.min.css">
+  <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.css">
+</head>
+<body>
+<nav id="toc">
+  <div id="toc-body" class="toc-body"></div>
+</nav>
+<article id="markdown">
+  <div id="markdown-body" class="markdown-body"><h1>用<code>npm</code>执行脚本</h1>
+<figure><img src="./running-scripts-with-npm/npm-script.png" alt="npm-script"></figure>
+<p>大部分<code>npm</code>用户都知道可以在<code>package.json</code>文件中定义<code>npm start</code>或者<code>npm test</code>这样的脚本任务。其实npm的脚本功能远远不止于启动服务器或者执行测试。</p>
+<p>这是一个典型的<code>package.json</code>文件。</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// package.json</span>
+<span class="hljs-comment">// 定义start和test脚本任务</span>
+{
+  <span class="hljs-string">"name"</span>: <span class="hljs-string">"death-clock"</span>,
+  <span class="hljs-string">"version"</span>: <span class="hljs-string">"1.0.0"</span>,
+  <span class="hljs-string">"scripts"</span>: {
+    <span class="hljs-string">"start"</span>: <span class="hljs-string">"node server.js"</span>,
+    <span class="hljs-string">"test"</span>: <span class="hljs-string">"mocha --reporter spec test"</span>
+  },
+  <span class="hljs-string">"devDependencies"</span>: {
+    <span class="hljs-string">"mocha"</span>: <span class="hljs-string">"^1.17.1"</span>
+  }
+}
+<span class="hljs-comment">// 这里为讲解需要，我在JSON文件内容中加了注解</span>
+<span class="hljs-comment">// 事实上JSON文件中是不允许有注释的</span>
+</code></pre>
+<p><code>start</code>其实是默认脚本任务，内容也默认是<code>node server.js</code>，所以上述配置其实是冗余的。为了能用在<code>test</code>任务中调用<code>mocha</code>，还需要把它作为依赖加到<code>devDependencies</code>这一节下（当然，加到<code>dependencies</code>这一节下也可以，但因为在生产环境中不需要用到，所以放到<code>devDependencies</code>下更合适一些）。</p>
+<p><code>mocha --reporter spec test</code>这句命令之所以能运行，是因为<code>npm</code>会在<code>node_modules/.bin</code>目录下检索相应的脚本文件，而<code>mocha</code>包被安装后，一个名为<code>mocha</code>的脚本也会安装到这个目录下。</p>
+<p><code>mocha</code>项目的<code>package.json</code>配置中的这一段描述了被安装到<code>bin</code>目录下的脚本。<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></p>
+<pre><code class="language-javascript"><span class="hljs-comment">// mocha package.json</span>
+{
+  <span class="hljs-string">"name"</span>: <span class="hljs-string">"mocha"</span>,
+  ...
+  <span class="hljs-string">"bin"</span>: {
+    <span class="hljs-string">"mocha"</span>: <span class="hljs-string">"./bin/mocha"</span>,
+    <span class="hljs-string">"_mocha"</span>: <span class="hljs-string">"./bin/_mocha"</span>
+  },
+  ...
+}
+</code></pre>
+<p>可以看到，<code>mocha</code>包定义了两个脚本：<code>mocha</code>和<code>_mocha</code>。</p>
+<p>很多<code>npm</code>包都定义了<code>bin</code>这一节的内容。这一节指定的脚本都可以像<code>mocha</code>一样被<code>npm</code>直接运行。执行<code>ls node_modules/.bin</code>命令就可以知道在当前项目下有哪些<code>npm</code>脚本。</p>
+<pre><code class="language-bash"><span class="hljs-comment"># 我一个项目下可用的npm脚本</span>
+$ ls node_modules/.bin
+_mocha   browserify  envify       jshint
+jsx      lessc       lesswatcher  mocha
+nodemon  uglifyjs    watchify
+</code></pre>
+<h2>执行脚本任务</h2>
+<p><code>start</code>和<code>test</code>这样的特殊脚本任务都可以直接执行。</p>
+<pre><code class="language-bash"><span class="hljs-comment"># 执行"start"指定的脚本</span>
+$ npm start
+$ npm run start
+
+<span class="hljs-comment"># 执行"test"指定的脚本</span>
+$ npm <span class="hljs-built_in">test</span>
+$ npm run <span class="hljs-built_in">test</span>
+</code></pre>
+<p>所有其它的脚本任务都必须用<code>npm run</code>来执行。<code>npm run</code>是<code>npm run-script</code>的缩略。</p>
+<pre><code class="language-javascript">{
+  ...
+  <span class="hljs-string">"scripts"</span>: {
+    <span class="hljs-comment">// watch-test starts a mocha watcher that listens for changes</span>
+    <span class="hljs-string">"watch-test"</span>: <span class="hljs-string">"mocha --watch --reporter spec test"</span>
+  },
+}
+</code></pre>
+<p>上述代码指定的脚本任务可以通过<code>npm run watch-test</code>来执行，执行<code>npm watch-test</code>则会报错。</p>
+<h2>直接执行脚本文件</h2>
+<p>上述例子中执行的脚本任务都定义在<code>package.json</code>中，但这并不是必要条件。<code>npm run</code>可以执行任意<code>node_modules/.bin</code>路径下的脚本。也就是说，除了<code>npm test</code>，我还可以直接通过<code>npm run mocha</code>来执行<code>mocha</code>脚本。<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup></p>
+<h2>自动补全</h2>
+<p>我们很难记住各种模块提供的形形色色的脚本命令。如果有自动补全的话，输入命令就简单多了。事实上用<code>npm</code>执行脚本是可以做到自动补全的。<code>npm</code>提供了非常友好的命令补全功能。执行<code>npm completion</code>可以得到一个<code>npm</code>的命令自动补全脚本，只要应用这个脚本，就能很方便的自动补全<code>npm</code>的普通子命令或者<code>npm run</code>的脚本命令。太方便了！</p>
+<p>我习惯于把各种自动补全脚本存成文件放到<code>.bashrc</code>文件可以调用的地方去。</p>
+<pre><code class="language-bash"><span class="hljs-comment"># npm_completion.sh</span>
+. &lt;(npm completion)
+
+<span class="hljs-comment"># 我一个项目的自动补全输出</span>
+$ npm run &lt;tab&gt;
+nodemon           browserify          build
+build-js          build-less          start
+jshint            <span class="hljs-built_in">test</span>                deploy
+less              uglify-js           express
+mocha             watch               watch-js
+watch-less        watch-server
+</code></pre>
+<p>很帅吧！</p>
+<h2>组合脚本任务</h2>
+<p>上述的<code>npm</code>特性已经可以满足大部分场景了，不过有时候我们需要同时完成多项任务。<code>npm</code>也具备这样的能力。<code>npm run</code>其实最后会把脚本任务输出给<code>sh</code>执行，所以理论上我们可以像在命令行中一样组合各种脚本任务。</p>
+<h3>管道</h3>
+<p>假设我们要用<code>browserify</code>打包<code>javascript</code>文件，并且要用<code>uglifyjs</code>进行代码混淆。我只需要用管道（<code>|</code>）把<code>browserify</code>的输出转接给<code>uglifyjs</code>就可以了。非常简单。</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// package.json</span>
+<span class="hljs-comment">// browserify的reactify选项用于处理React语法</span>
+<span class="hljs-string">"scripts"</span>: {
+  <span class="hljs-string">"build-js"</span>: <span class="hljs-string">"browserify -t reactify app/js/main.js | uglifyjs -mc &gt; static/bundle.js"</span>
+},
+<span class="hljs-comment">// 添加必要的依赖项</span>
+<span class="hljs-string">"devDependencies"</span>: {
+  <span class="hljs-string">"browserify"</span>: <span class="hljs-string">"^3.14.0"</span>,
+  <span class="hljs-string">"reactify"</span>: <span class="hljs-string">"^0.5.1"</span>,
+  <span class="hljs-string">"uglify-js"</span>: <span class="hljs-string">"^2.4.8"</span>
+}
+</code></pre>
+<h3>串行</h3>
+<p>另一个场景是我们希望当且仅当上一个命令完成后，再执行下一个命令。可以通过串行符号（<code>&amp;&amp;</code>）来实现这个功能，当然，管道（<code>|</code>）也可以实现类似的效果。<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup></p>
+<pre><code class="language-javascript"><span class="hljs-string">"scripts"</span>: {
+  <span class="hljs-comment">// 如果build-js，则继续执行build-less</span>
+  <span class="hljs-string">"build"</span>: <span class="hljs-string">"npm run build-js &amp;&amp; npm run build-less"</span>,
+  ...
+  <span class="hljs-string">"build-js"</span>: <span class="hljs-string">"browserify -t reactify app/js/main.js | uglifyjs -mc &gt; static/bundle.js"</span>,
+  <span class="hljs-string">"build-less"</span>: <span class="hljs-string">"lessc app/less/main.less static/main.css"</span>
+}
+</code></pre>
+<p>这里，我通过<code>build</code>脚本任务来执行另外两个在<code>package.json</code>中定义的脚本任务。和执行脚本不同之处在于：必须使用<code>npm run</code>来执行其它脚本任务。</p>
+<h3>并行</h3>
+<p>有时候并行地执行多个命令的功能也是必要的。使用并行符号（<code>&amp;</code>）可以把子命令作为后台任务并行执行。</p>
+<pre><code class="language-javascript"><span class="hljs-string">"scripts"</span>: {
+  <span class="hljs-comment">// 并行地执行watch-js，watch-less和watch-server</span>
+  <span class="hljs-string">"watch"</span>: <span class="hljs-string">"npm run watch-js &amp; npm run watch-less &amp; npm run watch-server"</span>,
+  <span class="hljs-string">"watch-js"</span>: <span class="hljs-string">"watchify app/js/main.js -t reactify -o static/bundle.js -dv"</span>,
+  <span class="hljs-string">"watch-less"</span>: <span class="hljs-string">"nodemon --watch app/less/*.less --ext less --exec 'npm run build-less'"</span>,
+  <span class="hljs-string">"watch-server"</span>: <span class="hljs-string">"nodemon --ignore app --ignore static server.js"</span>
+},
+<span class="hljs-comment">// 添加必要的依赖项</span>
+<span class="hljs-string">"devDependencies"</span>: {
+  <span class="hljs-string">"watchify"</span>: <span class="hljs-string">"^0.6.2"</span>,
+  <span class="hljs-string">"nodemon"</span>: <span class="hljs-string">"^1.0.15"</span>
+}
+</code></pre>
+<p>上述配置有几个挺有意思的点。首先<code>watch</code>脚本任务使用<code>&amp;</code>来并行执行三个<code>watch</code>任务。如果按下<code>Ctrl-C</code>杀掉进程，所有<code>watch</code>任务都会停止，因为它们由同一个父进程执行。</p>
+<p><code>watchify</code>是<code>browserify</code>命令的<code>watch</code>模式。<code>watch-server</code>是<code>nodemon</code>的标准用法：每当有相应的文件变更时，重启服务器。</p>
+<p><code>watch-less</code>则是<code>nodemon</code>的一种不常见的用法。每当有<code>less</code>文件变更的时候，它都会执行<code>npm run build-less</code>命令把<code>less</code>文件编译成<code>CSS</code>文件。<code>--ext less</code>是必需的选项。<code>--exec</code>选项指定的是<code>nodemon</code>执行的外部命令。</p>
+<h2>复杂脚本</h2>
+<p>如果是更复杂的脚本任务，我通常会写成<code>bash</code>文件，而在<code>package.json</code>中指定为脚本任务。下面是一个脚本实例，这个脚本做的事情是把编译好的资源加到一个发布分支，并且把这个分之推送到<code>Heroku</code>上。</p>
+<pre><code class="language-bash"><span class="hljs-meta">#!/bin/bash
+</span>
+<span class="hljs-built_in">set</span> -o errexit <span class="hljs-comment"># Exit on error</span>
+
+git stash save -u <span class="hljs-string">'Before deploy'</span> <span class="hljs-comment"># Stash all changes, including untracked files, before deploy</span>
+git checkout deploy
+git merge master --no-edit <span class="hljs-comment"># Merge in the master branch without prompting</span>
+npm run build <span class="hljs-comment"># Generate the bundled Javascript and CSS</span>
+<span class="hljs-keyword">if</span> $(git commit -am Deploy); <span class="hljs-keyword">then</span> <span class="hljs-comment"># Commit the changes, if any</span>
+  <span class="hljs-built_in">echo</span> <span class="hljs-string">'Changes Committed'</span>
+<span class="hljs-keyword">fi</span>
+git push heroku deploy:master <span class="hljs-comment"># Deploy to Heroku</span>
+git checkout master <span class="hljs-comment"># Checkout master again</span>
+git stash pop <span class="hljs-comment"># And restore the changes</span>
+</code></pre>
+<p>加上<code>package.json</code>的配置后，就可以通过<code>npm run deploy</code>命令执行这个脚本了。</p>
+<pre><code class="language-javascript"><span class="hljs-string">"scripts"</span>: {
+  <span class="hljs-string">"deploy"</span>: <span class="hljs-string">"./bin/deploy.sh"</span>
+},
+</code></pre>
+<h2>小结</h2>
+<p>对于<code>Node</code>而言，<code>npm</code>的存在意义并不止于包管理器。通过合适的配置，我们可以处理绝大部分的脚本需求。</p>
+<p>另一个用<code>npm</code>执行脚本的原因是，只需要配置好<code>start</code>和<code>test</code>，我的项目就可以和<code>Heroku</code>和<code>TravisCI</code>这样的<code>SaaS</code>服务提供商整合起来了。</p>
+<h2>文档信息</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>原文作者</td>
+<td><a href="https://github.com/andersjanmyr">Anders Janmyr</a></td>
+</tr>
+<tr>
+<td>原文链接</td>
+<td><a href="http://anders.janmyr.com/2014/03/running-scripts-with-npm.html">http://anders.janmyr.com/2014/03/running-scripts-with-npm.html</a></td>
+</tr>
+<tr>
+<td>本文链接</td>
+<td><a href="http://leungwensen.github.io/blog/2016/from-socialcalc-to-ethercalc.html">http://leungwensen.github.io/blog/2016/from-socialcalc-to-ethercalc.html</a></td>
+</tr>
+</tbody>
+</table>
+<p>如果发现翻译问题，欢迎反馈：<a href="mailto:leungwensen@gmail.com">leungwensen@gmail.com</a></p>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p>原文笔误：<code>mocha</code>写成了<code>macha</code> <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p>原文错误：<code>npm test</code>写成了<code>mocha test</code> <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p>原文代码注释错误：<code>build-js</code>写成了<code>build-less</code> <a href="#fnref3" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+</div>
+</article>
+<div id="loading">
+  <div class="sk-double-bounce">
+    <div class="sk-child sk-double-bounce1"></div>
+    <div class="sk-child sk-double-bounce2"></div>
+  </div>
+</div>
+
+<script src="http://leungwensen.github.io/zfinder/dist/lib/jquery-3.1.0.min.js"></script>
+<script src="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.js"></script>
+</body>
+</html>
