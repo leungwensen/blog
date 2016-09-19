@@ -10,6 +10,7 @@
 * [SocialCalc(译文)](./2016/socialcalc.md)
 * [从SocialCalc到EtherCalc(译文)](./2016/from-socialcalc-to-ethercalc.md)
 * [程序员的算法趣题(译本)](./2016/70-math-quizs-for-programmers.md)
+* [用npm执行脚本(译文)](./2016/running-scripts-with-npm.md)
 
 ### 2015
 
@@ -32,10 +33,8 @@
 
 ```shell
 $ git clone https://github.com/leungwensen/blog.git $path/to/blog
-$ npm install zfinder -g
-$ zfinder serve $path/to/blog
+$ npm install
+$ npm start
 ```
-
-更多zfinder相关信息: [zfinder](https://github.com/zfinder)
 
 *built by [zfinder](https://github.com/leungwensen/zfinder)*
