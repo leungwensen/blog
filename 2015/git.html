@@ -71,7 +71,7 @@
 <p>传统集中式的版本控制系统最大的问题会出在最后的合并流程。因为事实上开发分支和合并分支甚至是物理隔离的，而拥有合并权限的人和具体分支开发者往往不是同一个人，最终解决冲突的过程会有各种意料之外的情况。这是svn、cvs这些版本控制系统避免不了的问题。</p>
 <p>而git里你随时可以建新分支，随时可以合并分支，操作的都是同一份物理备份，你基于这个物理备份做过的所有变更都有迹可循。并且基于强大的分支功能，我们甚至可以把分支的粒度降到单个类、甚至单个函数的级别，这样粒度的分支开发合并起来丝毫体会不到迟滞的感觉。</p>
 <h3>git的问题</h3>
-<p>如果用git来管理非常庞大的历史项目，那么有可能会碰到git的一个问题：它没办法像svn一样checkout一个子目录，因此第一次clone的时候速度会非常慢。并且当项目规模迅速膨胀的时候，有可能会因为元数据剧增而自动走清理cache、压缩元数据的流程。所以这里有一个<strong><em>成名的机会</em></strong>。如果你能够给git加上<strong><em>p2p数据传输或者断点续传</em></strong>的特性，或者你可以解决<strong><em>GB或者更大级别数据计算hash</em></strong>时的性能问题，你都能在开源界青史留名。</p>
+<p>如果用git来管理非常庞大的历史项目，那么有可能会碰到git的一个问题：它没办法像svn一样checkout一个子目录，因此第一次clone的时候速度会非常慢。并且当项目规模迅速膨胀的时候，有可能会因为元数据剧增而自动走清理cache、压缩元数据的流程。所以这里有一个***成名的机会***。如果你能够给git加上***p2p数据传输或者断点续传***的特性，或者你可以解决***GB或者更大级别数据计算hash***时的性能问题，你都能在开源界青史留名。</p>
 <h2>安装&amp;配置</h2>
 <p>下面是一些基本的安装配置流程。</p>
 <h3>命令行</h3>
@@ -143,7 +143,7 @@ $ apt-get install git-core
 .grunt
 .last_cover_stats
 .lock-wscript
-.repl_<span class="hljs-built_in">history</span>
+.repl_history
 .rvmrc
 Build.bat
 MANIFEST.bak
@@ -287,7 +287,7 @@ $ git push origin :refs/tags/&lt;tagname&gt;
 <h2>工作流程</h2>
 <p>前面提过，得益于git的强大与简洁，业界已经衍生出几种基于git的工作流程。下面介绍几种有代表性的。</p>
 <h3>集中式流程(centralized workflow)</h3>
-<p>这种工作流程称得上是git对集中式版本控制系统的<strong><em>降维攻击</em></strong>。一般来说比较适合用于个人项目、小团队项目或者充当从旧的版本控制系统迁移到git的过渡方案。</p>
+<p>这种工作流程称得上是git对集中式版本控制系统的***降维攻击***。一般来说比较适合用于个人项目、小团队项目或者充当从旧的版本控制系统迁移到git的过渡方案。</p>
 <p>它大致的理念就是完全只用一个master分支作为开发、测试、发布分支，这样就相当于使用传统的集中式版本控制系统了。并且加上了一部分强大的git特性。</p>
 <p>如果你熟悉<a href="http://git-scm.com/book/en/v1/Git-and-Other-Systems-Git-and-Subversion#git-svn">git-svn</a>，那么你甚至可以继续使用原有的svn服务器，改用git来做版本管理。</p>
 <h3>特性分支(feature branch)</h3>
@@ -300,7 +300,7 @@ $ git push origin :refs/tags/&lt;tagname&gt;
 <li>bugfix分支可以从dev或者master分支checkout，以<code>bugfix-</code>开头，后半部分命名规则如上</li>
 <li>非代码资源、文档资源和其它静态资源可以建asset分支专门维护，也可以从asset中checkout以<code>asset-</code>开头的自分支</li>
 <li>每次checkout新分支之前要先同步远程版本库（<code>git pull</code>）</li>
-<li>开发功能点前最好新建issue，开发完成后新建一个<strong><em>从feature分支到dev分支的merge request</em></strong>，并邀请其他成员进行code review，review人确认过后合并分支并且关闭issue。</li>
+<li>开发功能点前最好新建issue，开发完成后新建一个***从feature分支到dev分支的merge request***，并邀请其他成员进行code review，review人确认过后合并分支并且关闭issue。</li>
 <li>发布之前把dev分支合并到master分支，测试通过后打上tag（<code>git tag -a</code>），新的开发流程开始时dev分支要重新基于master（<code>git checkout dev &amp; git rebase master</code>）</li>
 </ul>
 <h3>forking工作流程(forking workflow)</h3>

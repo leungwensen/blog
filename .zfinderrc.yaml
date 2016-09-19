@@ -1,0 +1,5 @@
+openOnStart: true
+port: 2333
+handler:
+  serve-index:
+    priority: 100
