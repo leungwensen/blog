@@ -4,15 +4,41 @@
   <meta charset="UTF-8">
 <meta http-equiv="Content-Type" name="viewport" content="width=device-width, initial-scale=1"/>
 <title>SocialCalc</title>
+<link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/lib/normalize-4.2.0.min.css">
 
   <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/lib/github-markdown-2.3.0.min.css">
   <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.css">
 </head>
 <body>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+     style="width:0;height:0;position:absolute;overflow:hidden;">
+  <defs>
+    <symbol id="si-zfinder-collapse-left" viewBox="0 0 38 38">
+      <path d="M38 0H0v38h38V0zM3 35V3h32v32H3zM5 5v28h17V21h-9.667L16 26h-4l-5-7 5-7h4l-3.667 5H22V5H5z"/>
+    </symbol>
+    <symbol id="si-zfinder-expand-right" viewBox="0 0 38 38">
+      <path d="M0 0h38v38H0V0zm35 35V3H3v32h32zM22 5v28H5V21h9.667L11 26h4l5-7-5-7h-4l3.667 5H5V5h17z"/>
+    </symbol>
+    <symbol id="si-zfinder-fullscreen" viewBox="0 0 28 28">
+      <path d="M4 18H0v10h10v-4H4v-6zm-4-8h4V4h6V0H0v10zm24 14h-6v4h10V18h-4v6zM18 0v4h6v6h4V0H18z"/>
+    </symbol>
+    <symbol id="si-zfinder-fullscreen-exit" viewBox="0 0 28 28">
+      <path d="M0 22h6v6h4V18H0v4zM6 6H0v4h10V0H6v6zm12 22h4v-6h6v-4H18v10zm4-22V0h-4v10h10V6h-6z"/>
+    </symbol>
+  </defs>
+</svg>
 <nav id="toc">
   <div id="toc-body" class="toc-body"></div>
 </nav>
 <article id="markdown">
+  <nav id="markdown-header" class="markdown-header">
+    <svg class="si" id="toggle-toc" width="24" height="24">
+      <use xlink:href="#si-zfinder-collapse-left"></use>
+    </svg>
+    <svg class="si float-right" id="toggle-fullscreen-article" width="24" height="24">
+      <use xlink:href="#si-zfinder-fullscreen"></use>
+    </svg>
+  </nav>
   <div id="markdown-body" class="markdown-body"><h1>SocialCalc</h1>
 <p>电子表格（spreadsheets）的历史已经超过30年。第一个电子表格软件<a href="https://en.wikipedia.org/wiki/VisiCalc">VisiCalc</a>由<a href="http://danbricklin.com/">Dan Bricklin</a>于1978年设计，并于1979年问世。其原始理念非常直截了当：就是一个可以向两个维度无限延展的表格，表格中的每一个单元格可以由文字、数字或者公式组成。公式可以是运算符或者一些内置函数的组合，并且每一个公式都可以访问到其它单元格的当前值。</p>
 <p>虽然这个概念非常简单，但它有着非常广泛的应用场景：会计、库存清点、编目管理等只是其中少数的几个。它可以做的事情几乎是无限的。这些用途使得VisiCalc成为个人电脑时代的“杀手级应用“。</p>
@@ -255,7 +281,7 @@ spreadsheet.ExecuteCommand(<span class="hljs-string">'set sheet defaulttextvalue
 <pre><code class="language-javascript">SocialCalc.ScheduleSheetCommands = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">sheet, cmdstr, saveundo, isRemote</span>) </span>{
    <span class="hljs-keyword">if</span> (SocialCalc.Callbacks.broadcast &amp;&amp; !isRemote) {
        SocialCalc.Callbacks.broadcast(<span class="hljs-string">'execute'</span>, {
-           cmdstr: cmdstr, saveundo: saveundo
+           <span class="hljs-attr">cmdstr</span>: cmdstr, <span class="hljs-attr">saveundo</span>: saveundo
        });
    }
    <span class="hljs-comment">// …ScheduleSheetCommands的原始代码…</span>
@@ -273,7 +299,7 @@ spreadsheet.ExecuteCommand(<span class="hljs-string">'set sheet defaulttextvalue
 <pre><code class="language-javascript"><span class="hljs-keyword">var</span> hpipe = <span class="hljs-keyword">new</span> Hippie.Pipe();
 
 SocialCalc.Callbacks.broadcast = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">type, data</span>) </span>{
-    hpipe.send({ type: type, data: data });
+    hpipe.send({ <span class="hljs-attr">type</span>: type, <span class="hljs-attr">data</span>: data });
 };
 
 $(hpipe).bind(<span class="hljs-string">"message.execute"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">e, d</span>) </span>{
@@ -299,8 +325,8 @@ $(hpipe).bind(<span class="hljs-string">"message.execute"</span>, <span class="h
 <p>为实现这个方案，我们为<code>MoveECellCallback</code>事件添加了一个<code>broadcast</code>：</p>
 <pre><code class="language-javascript">editor.MoveECellCallback.broadcast = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) </span>{
     hpipe.send({
-        type: <span class="hljs-string">'ecell'</span>,
-        data: e.ecell.coord
+        <span class="hljs-attr">type</span>: <span class="hljs-string">'ecell'</span>,
+        <span class="hljs-attr">data</span>: e.ecell.coord
     });
 };
 
@@ -431,6 +457,7 @@ box-shadow: inset <span class="hljs-number">0</span> <span class="hljs-number">0
 </div>
 
 <script src="http://leungwensen.github.io/zfinder/dist/lib/jquery-3.1.0.min.js"></script>
+<script src="http://leungwensen.github.io/zfinder/dist/lib/screenfull-3.0.0.min.js"></script>
 <script src="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.js"></script>
 </body>
 </html>

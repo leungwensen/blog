@@ -4,15 +4,41 @@
   <meta charset="UTF-8">
 <meta http-equiv="Content-Type" name="viewport" content="width=device-width, initial-scale=1"/>
 <title>程序员的算法趣题</title>
+<link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/lib/normalize-4.2.0.min.css">
 
   <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/lib/github-markdown-2.3.0.min.css">
   <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.css">
 </head>
 <body>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+     style="width:0;height:0;position:absolute;overflow:hidden;">
+  <defs>
+    <symbol id="si-zfinder-collapse-left" viewBox="0 0 38 38">
+      <path d="M38 0H0v38h38V0zM3 35V3h32v32H3zM5 5v28h17V21h-9.667L16 26h-4l-5-7 5-7h4l-3.667 5H22V5H5z"/>
+    </symbol>
+    <symbol id="si-zfinder-expand-right" viewBox="0 0 38 38">
+      <path d="M0 0h38v38H0V0zm35 35V3H3v32h32zM22 5v28H5V21h9.667L11 26h4l5-7-5-7h-4l3.667 5H5V5h17z"/>
+    </symbol>
+    <symbol id="si-zfinder-fullscreen" viewBox="0 0 28 28">
+      <path d="M4 18H0v10h10v-4H4v-6zm-4-8h4V4h6V0H0v10zm24 14h-6v4h10V18h-4v6zM18 0v4h6v6h4V0H18z"/>
+    </symbol>
+    <symbol id="si-zfinder-fullscreen-exit" viewBox="0 0 28 28">
+      <path d="M0 22h6v6h4V18H0v4zM6 6H0v4h10V0H6v6zm12 22h4v-6h6v-4H18v10zm4-22V0h-4v10h10V6h-6z"/>
+    </symbol>
+  </defs>
+</svg>
 <nav id="toc">
   <div id="toc-body" class="toc-body"></div>
 </nav>
 <article id="markdown">
+  <nav id="markdown-header" class="markdown-header">
+    <svg class="si" id="toggle-toc" width="24" height="24">
+      <use xlink:href="#si-zfinder-collapse-left"></use>
+    </svg>
+    <svg class="si float-right" id="toggle-fullscreen-article" width="24" height="24">
+      <use xlink:href="#si-zfinder-fullscreen"></use>
+    </svg>
+  </nav>
   <div id="markdown-body" class="markdown-body"><h1>程序员的算法趣题</h1>
 <h2>图书信息</h2>
 <figure><img src="./70-math-quizs-for-programmers/cover.jpg" alt="程序员的算法趣题"></figure>
@@ -59,6 +85,7 @@
 </div>
 
 <script src="http://leungwensen.github.io/zfinder/dist/lib/jquery-3.1.0.min.js"></script>
+<script src="http://leungwensen.github.io/zfinder/dist/lib/screenfull-3.0.0.min.js"></script>
 <script src="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.js"></script>
 </body>
 </html>

@@ -4,15 +4,41 @@
   <meta charset="UTF-8">
 <meta http-equiv="Content-Type" name="viewport" content="width=device-width, initial-scale=1"/>
 <title>从SocialCalc到EtherCalc</title>
+<link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/lib/normalize-4.2.0.min.css">
 
   <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/lib/github-markdown-2.3.0.min.css">
   <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.css">
 </head>
 <body>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+     style="width:0;height:0;position:absolute;overflow:hidden;">
+  <defs>
+    <symbol id="si-zfinder-collapse-left" viewBox="0 0 38 38">
+      <path d="M38 0H0v38h38V0zM3 35V3h32v32H3zM5 5v28h17V21h-9.667L16 26h-4l-5-7 5-7h4l-3.667 5H22V5H5z"/>
+    </symbol>
+    <symbol id="si-zfinder-expand-right" viewBox="0 0 38 38">
+      <path d="M0 0h38v38H0V0zm35 35V3H3v32h32zM22 5v28H5V21h9.667L11 26h4l5-7-5-7h-4l3.667 5H5V5h17z"/>
+    </symbol>
+    <symbol id="si-zfinder-fullscreen" viewBox="0 0 28 28">
+      <path d="M4 18H0v10h10v-4H4v-6zm-4-8h4V4h6V0H0v10zm24 14h-6v4h10V18h-4v6zM18 0v4h6v6h4V0H18z"/>
+    </symbol>
+    <symbol id="si-zfinder-fullscreen-exit" viewBox="0 0 28 28">
+      <path d="M0 22h6v6h4V18H0v4zM6 6H0v4h10V0H6v6zm12 22h4v-6h6v-4H18v10zm4-22V0h-4v10h10V6h-6z"/>
+    </symbol>
+  </defs>
+</svg>
 <nav id="toc">
   <div id="toc-body" class="toc-body"></div>
 </nav>
 <article id="markdown">
+  <nav id="markdown-header" class="markdown-header">
+    <svg class="si" id="toggle-toc" width="24" height="24">
+      <use xlink:href="#si-zfinder-collapse-left"></use>
+    </svg>
+    <svg class="si float-right" id="toggle-fullscreen-article" width="24" height="24">
+      <use xlink:href="#si-zfinder-fullscreen"></use>
+    </svg>
+  </nav>
   <div id="markdown-body" class="markdown-body"><h1>从SocialCalc到EtherCalc</h1>
 <p><a href="https://ethercalc.net/">EtherCalc</a>是一个在线电子表格系统，它专注于在线协作编辑，使用SocialCalc作为浏览器端的电子表格引擎。SocialCalc由Dan Bricklin（电子表格的发明人）设计，是Socialtext平台的一部分。Socialtext是面向商业用户的协同工作平台。</p>
 <p>对Socialtext团队而言，2006年开发SocialCalc的主要目标是性能。主要的考虑是，虽然客户端的JavaScript运算会比服务器端的Perl运算慢一个量级，但总体而言所消耗的时间会比AJAX往返所需的网络延迟要少得多。</p>
@@ -51,17 +77,17 @@
 <h2>服务器版的SocialCalc</h2>
 <p>解决问题的关键技术是<a href="https://github.com/tmpvar/jsdom">jsdom</a>，一个W3C文档对象模型的完全实现，它令Node.js可以在模拟的浏览器环境中加载客户端JavaScript库。</p>
 <p>使用了jsdom之后，我们可以随意创建任意数目的服务器端SocialCalc电子表格，每个表格隔离在单独的沙盒里，只占去大约30KB的内存：</p>
-<pre><code class="language-javascript"><span class="hljs-built_in">require</span>! &lt;[ vm jsdom ]&gt;
+<pre><code class="language-javascript"><span class="hljs-built_in">require</span>! <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">[</span> <span class="hljs-attr">vm</span> <span class="hljs-attr">jsdom</span> ]&gt;</span>
 create-spreadsheet = -&gt;
-  document = jsdom.jsdom \&lt;html&gt;&lt;body/&gt;&lt;/html&gt;
-  sandbox  = vm.createContext window: document.createWindow! &lt;&lt;&lt; {
-    setTimeout, clearTimeout, alert: console.log
+  document = jsdom.jsdom \<span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">body</span>/&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
+  sandbox  = vm.createContext window: document.createWindow! <span class="hljs-tag">&lt;&lt;&lt; {
+    <span class="hljs-attr">setTimeout</span>, <span class="hljs-attr">clearTimeout</span>, <span class="hljs-attr">alert:</span> <span class="hljs-attr">console.log</span>
   }
-  vm.runInContext """
-    #packed-SocialCalc-js-code
-    window.ss = new SocialCalc.SpreadsheetControl
-  """ sandbox
-</code></pre>
+  <span class="hljs-attr">vm.runInContext</span> """
+    #<span class="hljs-attr">packed-SocialCalc-js-code</span>
+    <span class="hljs-attr">window.ss</span> = <span class="hljs-string">new</span> <span class="hljs-attr">SocialCalc.SpreadsheetControl</span>
+  """ <span class="hljs-attr">sandbox</span>
+</span></span></code></pre>
 <p>每个协作会话对应一个沙盒中的SocialCalc控制器，在上面执行所有获取的命令。然后服务器会把这个控制器的状态广播给所有新加入的客户端，顺带完全消除了记录操作日志的必要。</p>
 <p>因为对性能评估结果很满意，我们开发了一个基于Redis的持久化层，然后对外发布了<a href="http://ethercalc.org/">EtherCalc.org</a>公开测试版本。接下来的六个月内，它一直保持着良好的可扩展性，零故障完美地处理了百万级别的电子表格操作。</p>
 <p>在2012年4月，在OSDC.tw会议上分享了EtherCalc后，我受Trend Micro邀请参加了他们的黑客马拉松，把EtherCalc改造成他们实时网络流量监控系统的可编程的可视化引擎。</p>
@@ -185,6 +211,7 @@ w.postMessage command
 </div>
 
 <script src="http://leungwensen.github.io/zfinder/dist/lib/jquery-3.1.0.min.js"></script>
+<script src="http://leungwensen.github.io/zfinder/dist/lib/screenfull-3.0.0.min.js"></script>
 <script src="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.js"></script>
 </body>
 </html>
