@@ -9,7 +9,7 @@
 
 * [SocialCalc(译文)](./2016/socialcalc.md)
 * [从SocialCalc到EtherCalc(译文)](./2016/from-socialcalc-to-ethercalc.md)
-* [我想用SVG](./2016/i-wanna-use-svg.md)
+* [从icon fonts到SVG icons](./2016/from-icon-fonts-to-svg-icons.md)
 * [用npm执行脚本(译文)](./2016/running-scripts-with-npm.md)
 * [程序员的算法趣题(译本)](./2016/70-math-quizs-for-programmers.md)
 

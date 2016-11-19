@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="Content-Type" name="viewport" content="width=device-width, initial-scale=1"/>
+<title>从icon fonts到SVG icons</title>
+<link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/lib/normalize-4.2.0.min.css">
+
+  <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/lib/github-markdown-2.3.0.min.css">
+  <link rel="stylesheet" href="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.css">
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+     style="width:0;height:0;position:absolute;overflow:hidden;">
+  <defs>
+    <symbol id="si-zfinder-collapse-left" viewBox="0 0 38 38">
+      <path d="M38 0H0v38h38V0zM3 35V3h32v32H3zM5 5v28h17V21h-9.667L16 26h-4l-5-7 5-7h4l-3.667 5H22V5H5z"/>
+    </symbol>
+    <symbol id="si-zfinder-expand-right" viewBox="0 0 38 38">
+      <path d="M0 0h38v38H0V0zm35 35V3H3v32h32zM22 5v28H5V21h9.667L11 26h4l5-7-5-7h-4l3.667 5H5V5h17z"/>
+    </symbol>
+    <symbol id="si-zfinder-fullscreen" viewBox="0 0 28 28">
+      <path d="M4 18H0v10h10v-4H4v-6zm-4-8h4V4h6V0H0v10zm24 14h-6v4h10V18h-4v6zM18 0v4h6v6h4V0H18z"/>
+    </symbol>
+    <symbol id="si-zfinder-fullscreen-exit" viewBox="0 0 28 28">
+      <path d="M0 22h6v6h4V18H0v4zM6 6H0v4h10V0H6v6zm12 22h4v-6h6v-4H18v10zm4-22V0h-4v10h10V6h-6z"/>
+    </symbol>
+  </defs>
+</svg>
+<nav id="toc">
+  <div id="toc-body" class="toc-body"></div>
+</nav>
+<article id="markdown">
+  <nav id="markdown-header" class="markdown-header">
+    <svg class="si" id="toggle-toc" width="24" height="24">
+      <use xlink:href="#si-zfinder-collapse-left"></use>
+    </svg>
+    <svg class="si float-right" id="toggle-fullscreen-article" width="24" height="24">
+      <use xlink:href="#si-zfinder-fullscreen"></use>
+    </svg>
+  </nav>
+  <div id="markdown-body" class="markdown-body"><h1>从icon fonts到SVG icons</h1>
+<p>作为一个前端开发，在做项目，尤其是做个人项目的时候，使用<a href="https://www.w3.org/WAI/GL/wiki/Icon_Font_with_an_On-Screen_Text_Alternative">icon fonts</a>这件事常常让我感到很挫败。因为通常一个icon fonts库无法涵盖项目所有的图标需求，而混用不同的icon fonts库会带来进一步的问题：有时候你发现命名空间有冲突，有时候你发现两个库的图标padding不一致，从而有一堆修修补补的事情要做。如果项目需要用到彩色的图标，或者要基于图标做一些复杂的动画效果，又要引入SVG或者gif了。</p>
+<p>要解决这些问题，统一用SVG icons是一个可行的办法。当然，用icon fonts还是SVG icons这个话题太大，不在本文讨论之列。有兴趣的同学可以看看这些文章。</p>
+<ul>
+<li><a href="https://css-tricks.com/icon-fonts-vs-svg/">icon fonts vs SVG</a></li>
+<li><a href="https://www.sitepoint.com/icon-fonts-vs-svg-debate/">icon fonts vs SVG debate</a></li>
+<li><a href="https://medium.com/@webprolific/why-and-how-i-m-using-svg-over-fonts-for-icons-7241dab890f0#.oskcbcmfi">why and how I am using SVG over fonts for icons</a></li>
+</ul>
+<p>我自己总结了一下，如果不考虑浏览器兼容性的话，SVG icons从易用性／可维护性／表现力等各方面都比传统的icon fonts更有优势。从根本上说，一个是矢量文字（font），一个是表现矢量图形的XML（SVG），有点降维打击的意思。</p>
+<p>不过有个问题，现存的大部分开源图标库都是icon fonts的，包括影响力巨大的FontAwesome项目。相对而言，SVG icons方案可用的开源资源并不多。于是一个想法自然而言地诞生：能不能把现有的icon fonts直接转换成SVG icons？如果可以的话，从icon fonts升级到SVG icons的过程就非常平滑了。</p>
+<p>最直接的办法是从icon fonts图标库里的<a href="https://www.w3.org/TR/SVG/fonts.html">SVG font</a>文件（一般的icon fonts库都会带的一个SVG font文件，譬如FontAwesome的<a href="https://github.com/FortAwesome/Font-Awesome/blob/master/fonts/fontawesome-webfont.svg">fontawesome-webfont.svg</a>。如果没有，也可以很简单地从ttf文件转换得到：<a href="https://github.com/qdsang/ttf2svg">ttf2svg</a>）入手转换。</p>
+<p>得到这个SVG font文件之后，转换成可用的SVG文件就很简单了。仔细看看这个SVG font文件，会发现每个图标就是内部定义的一个glyph元素，这个元素内部就是一段SVG。取出这些glyph元素，我们就得到了一堆可独立使用的SVG片段。这里只需要注意一点：SVG font里的glyph的坐标系和SVG内嵌到HTML内时的坐标系是不一样的。glyph和普通的文字一样，左下角是坐标轴原点，而内嵌的SVG则和Canvas一样，左上角是坐标轴原点。所以第一步转换后还要在每个SVG片段最外层加一个用于坐标转换的<code>&lt;g&gt;</code>节点。</p>
+<pre><code class="language-xml"><span class="hljs-comment">&lt;!-- 原始的glyph元素 --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">glyph</span> <span class="hljs-attr">unicode</span>=<span class="hljs-string">"xxx"</span>&gt;</span><span class="hljs-comment">&lt;!-- Outline of xxx glyph --&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">glyph</span>&gt;</span>
+
+<span class="hljs-comment">&lt;!-- 转换后的SVG片段 --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">svg</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">"http://www.w3.org/2000/svg"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">g</span> <span class="hljs-attr">transform</span>=<span class="hljs-string">"scale(1, -1)"</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Outline of xxx glyph --&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">g</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">svg</span>&gt;</span>
+</code></pre>
+<p>其中<code>transform=&quot;scale(1, -1)&quot;</code>就是负责转换坐标轴的关键。至此，我们已经从一个传统的icon fonts图标库里提取出可用的SVG icon了，似乎就可以拿这些SVG icon合并成<a href="https://css-tricks.com/svg-sprites-use-better-icon-fonts/">SVG sprite</a>直接使用了？</p>
+<p>还是不行。首先你会发现简单粗暴的坐标变换（y轴反转）会导致图标矢量在显示的时候是偏离中心线的，所以作为inline图标内嵌到HTML里会有问题。为解决这个问题，可以在得到的SVG片段上再加一个坐标偏移的transform。</p>
+<pre><code class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">svg</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">"http://www.w3.org/2000/svg"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">g</span> <span class="hljs-attr">transform</span>=<span class="hljs-string">"scale(1, -1) translate(0 -${iconHeight})"</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Outline of xxx glyph --&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">g</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">svg</span>&gt;</span>
+</code></pre>
+<p>这里的<code>-${iconHeight}</code>就是矢量图形的高度，对应原本的SVG fonts文件中的<code>&lt;font-face&gt;</code>节点的<code>units-per-em</code>值。具体细节上的调整不少，关键点还是在坐标转换上。</p>
+<p>解决了这个问题之后基本上和原来使用icon fonts的体验差不多了，还顺带解决了命名冲突／表现力等各方面的问题。不过慢慢地你会发现原来icon fonts方案的一个致命问题没有解决：如果两个图标分别来自两个不同的图标库，padding等还是有不统一的问题（怎么同一行同样样式的两个图标看着大小不一样？）！而且现在你手里的SVG片段全部都包了一层用来做坐标转换的<code>&lt;g&gt;</code>元素，怎么看怎么别扭。</p>
+<p>先解决第二个问题，把这层碍眼的<code>&lt;g&gt;</code>元素干掉。幸好这件事不用太操心，已经有人做掉了。用<a href="https://github.com/svg/svgo">svgo</a>这个库就可以把这些杂七杂八的坐标转换干掉，还你一个清爽的SVG片段。</p>
+<p>第一个问题有点棘手。最理想的结果是，我们把所有来自不同icon fonts库得到的SVG片段都清理一遍，去掉所有的padding，只留下表示矢量图形的片段，和一个<code>viewBox</code>属性标示这个矢量图形的实际宽高。这样只要给每个SVG片段设置同样的<code>width</code>和<code>height</code>属性，就可以得到统一的视觉效果了。</p>
+<p>根据前面的经验，我们只要设置恰当的<code>transform</code>把整个矢量图形移动到其边缘和两条坐标轴相切，剩下的事情就可以交给svgo了。关键就在于，我们怎么知道目前矢量图形偏离两个坐标轴多远（top和left）？</p>
+<p>图标的SVG片段我们有了。通过遍历这个SVG片段内部的各种图形（Rect, Path, etc）和它们的各种属性，计算出与两个坐标轴的最短距离就能得到top和left的值。不过这件事相当难，举个例子，如果矢量图形里有个曲线，那计算起来真的是要了命了。另外，要得到正确的结果就一定要遍历所有的情况。而如果依靠穷举来做，最终代码维护一定是个深坑。</p>
+<p>那么，最笨的办法是什么呢？创建一个SVG文件把这个SVG片段写进去，打开浏览器，打开调试控制台，看矢量图形部分的top和left属性。然后编辑这个文件，<code>transform</code>里加上<code>translate=(-${left}, -${top})</code>。返回浏览器刷新，我们得到了想要的结果。</p>
+<p>好了，思路有了。既然浏览器能做，那直接拿一个无头浏览器也可以做，然后就可以脚本化、自动化了。经过试验，<a href="http://phantomjs.org/">PhantomJS</a>和<a href="https://github.com/electron/electron">Electron</a>都符合要求。一旦祭出这个终极方案，前面很多工作都可以省略了，譬如解释SVG font文件，计算坐标转换的各种参数等。</p>
+<p>最终从icon fonts得到SVG icons的整个流程可以描述如下：由icon fonts库得到SVG fonts文件（可能要转换），然后抽取各个glyph片段，翻转坐标系得到SVG片段，用无头浏览器把矢量图形对齐到坐标轴，用svgo优化输出。</p>
+<p>然后就可以享用SVG icon了。内嵌到页面／sprite／做动画／加彩色／更好的渲染效果…新世界的大门已经向你打开。</p>
+<p>这个事情说起来逻辑还算简单清晰，似乎没有什么特别难的地方。不过说到底，icon fonts是一套标准，SVG fonts又是一套标准，SVG symbol/sprites又是不同的标准。在标准的转换之间需要特别严谨，兼容各种开源icon fonts库，兼容它们背后各种不同的设计风格等等又是另一堆问题。还有个比较尴尬的点：一旦转换的图标数量上来了，性能就成了不得不考虑的问题：每处理一个图标就要开一个无头浏览器进程，每次优化完还要重新所有图标处理一遍。不做任何优化的话，NodeJS进程是会挂掉的（弱爆了）。</p>
+<p>好消息是，我已经把整个流程自动化了。绝大多数的坑也已经填好。还准备了10k+个从开源图标库里转换过来的SVG icons。如果你还在犹豫要不要从icon fonts转为SVG icons，那么你最后的借口已经没了。项目地址：<a href="https://github.com/leungwensen/svg-icon">svg-icon</a>。目前项目在重构当中，欢迎各种issue和pull request。</p>
+</div>
+</article>
+<div id="loading">
+  <div class="sk-double-bounce">
+    <div class="sk-child sk-double-bounce1"></div>
+    <div class="sk-child sk-double-bounce2"></div>
+  </div>
+</div>
+
+<script src="http://leungwensen.github.io/zfinder/dist/lib/jquery-3.1.0.min.js"></script>
+<script src="http://leungwensen.github.io/zfinder/dist/lib/screenfull-3.0.0.min.js"></script>
+<script src="http://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.js"></script>
+</body>
+</html>
