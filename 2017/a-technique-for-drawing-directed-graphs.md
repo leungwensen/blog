@@ -1,18 +1,5 @@
 # 一种画有向图的技术
 
-<!--
-
-## 术语
-
-| 英文 | 中文 |
-|---|---|
-| vertex | 顶点 |
-| edge | 边 |
-| node | 节点 |
-| component | 组件 |
-
--->
-
 ## 原文信息
 
 原文是AT&T贝尔实验室graphviz项目组沉淀的一篇论文，描述了graphviz中的dot布局所用的算法。
@@ -27,6 +14,16 @@ Kiem-Phong Vo
 
 AT&T Bell Laboratories Murray Hill, New Jersey 07974
 ```
+
+## 术语表
+
+| 英文 | 中文 |
+|---|---|
+| vertex | 顶点 |
+| edge | 边 |
+| node | 节点 |
+| component | 组件 |
+
 
 ### 相关链接
 
