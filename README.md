@@ -1,9 +1,13 @@
 文森叔叔的小屋
 ============
 
-链接: http://leungwensen.github.io/blog/
+链接: http://leungwensen.github.io/blog/ 仓库: https://github.com/leungwensen/blog
 
 ## 博文列表
+
+### 2017
+
+* [[WIP]一种画有向图的技术(译文)](./2017/a-technique-for-drawing-directed-graphs.md)
 
 ### 2016
 
@@ -12,6 +16,8 @@
 * [从icon fonts到SVG icons](./2016/from-icon-fonts-to-svg-icons.md)
 * [用npm执行脚本(译文)](./2016/running-scripts-with-npm.md)
 * [程序员的算法趣题(译本)](./2016/70-math-quizs-for-programmers.md)
+* [[TRASH]~~决策树~~](./2015/decision-tree.md)
+
 
 ### 2015
 
@@ -26,9 +32,6 @@
 
 * [像外行一样思考，像专家一样实践(修订版)(译本)](./2014/think-like-a-rookie-while-practice-like-a-pro.md)
 
-## trash
-
-* [决策树](./2015/decision-tree.md)
 
 ## 本地查看
 
