@@ -21,8 +21,12 @@ AT&T Bell Laboratories Murray Hill, New Jersey 07974
 |---|---|
 | vertex | 顶点 |
 | edge | 边 |
+| rank | 层级 |
+| ranking | 排序 |
 | node | 节点 |
 | component | 组件 |
+| spline | 样条 |
+| B-spline | B样条 |
 
 
 ### 相关链接
