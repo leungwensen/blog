@@ -15,20 +15,25 @@ Kiem-Phong Vo
 AT&T Bell Laboratories Murray Hill, New Jersey 07974
 ```
 
-## 术语表
+## 术语表（按字母顺序排序）
 
 | 英文 | 中文 |
 |---|---|
 | B-spline | B样条 |
+| backward edge | 后向边 |
 | component | 组件 |
+| cross edge | 交叉边 |
+| depth-first search | 深度优先搜索 |
 | edge | 边 |
+| forward edge | 前向边 |
 | node | 节点 |
+| non-tree edge | 非树形边 |
 | rank | 层级 |
 | ranking | 排序 |
 | self-edge | 自连边 |
 | spline | 样条 |
+| tree edge | 树形边 |
 | vertex | 顶点 |
-
 
 ### 相关链接
 
@@ -209,7 +214,9 @@ digraph shells {
 
 ### 2.1 图形去环
 
-要有一个固定的层级分配，图一定不能存在环。而因为输入的图可能存在环，所以会有一个预处理步骤检测环并且通过反转某个边来去环[^RDM]。
+要有一个固定的层级分配，图一定不能存在环。而因为输入的图可能存在环，所以会有一个预处理步骤检测环并且通过反转某个边来去环[^RDM]。当然，这些边只是在算法内部被反转，最终画出来的图上箭头方向还是原来的方向。深度优先搜索在去环处理上很有用。输入图的边会从任意存在的起始节点或者终止节点按照其"原本"的顺序遍历。在深度优先搜索中，这些边会被分成两个集合：树形边和非树形边[^AHU]。树为部分节点指定了顺序，根据这些顺序，非树边会被进一步划分为三个子集：交叉边，前向边和后向边。交叉边连接的节点不在树节点中。前向边从树的一个节点连接到其后续节点上。后向边从树的一个节点连接到其祖先节点上。显然，向树形顺序中增加前向边和交叉边不会造成环。而所有后向边都会被转换成前向边，这个处理就破坏了所有的环结构。
+
+
 
 ### 2.2 问题定义
 
@@ -245,6 +252,10 @@ X和Y坐标计算分两步进行。第一步是根据已经计算好的排序顺
 ## 6. 总结
 
 ## 7. 致谢
+
+## 联系方式
+
+如果发现翻译问题，欢迎提出[issue](https://github.com/leungwensen/blog/issues/new)或者[pull request](https://github.com/leungwensen/blog/pulls)。也可以联系译者[绝云](mailto:leungwensen@gmail.com)和[青湳](https://github.com/elaine1234)
 
 ## 索引
 
