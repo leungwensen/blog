@@ -29,6 +29,6 @@
     },
     "dependencies": {},
     "devDependencies": {
-        "zfinder": "^0.2.9"
+        "zfinder": "^0.2.10"
     }
 }
