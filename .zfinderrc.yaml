@@ -3,3 +3,5 @@ port: 2333
 handler:
   serve-index:
     priority: 100
+    suffixes:
+      - /README.md
