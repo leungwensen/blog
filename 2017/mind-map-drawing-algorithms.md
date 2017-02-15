@@ -53,13 +53,15 @@
             "label": "special link",
             "target": "child-2"
         }
-    ],
-    "comments": {
-        "root": "思维导图的根节点话题",
-        "links": "思维导图节点间非继承关系的额外联系"
-    }
+    ]
 }
 ```
+
+> root及其子孙是思维导图里的节点，对应XMind里的Topic
+
+> links是思维导图节点间非继承关系的额外联系，对应XMind里的Relationship
+
+更多关于.xmind文件的结构可参见[xmind-sdk-javascript](https://github.com/leungwensen/xmind-sdk-javascript)
 
 ### 输出
 
