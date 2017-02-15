@@ -25,6 +25,16 @@
       "parent": "root"
     },
     {
+      "label": "child-3",
+      "id": "child-3",
+      "parent": "root"
+    },
+    {
+      "label": "child-4",
+      "id": "child-4",
+      "parent": "root"
+    },
+    {
       "label": "child-1-1",
       "id": "child-1-1",
       "parent": "child-1"
@@ -33,12 +43,27 @@
       "label": "child-1-2",
       "id": "child-1-2",
       "parent": "child-1"
+    },
+    {
+      "label": "child-1-2-1",
+      "id": "child-1-2-1",
+      "parent": "child-1-2"
+    },
+    {
+      "label": "child-4-1",
+      "id": "child-4-1",
+      "parent": "child-4"
+    },
+    {
+      "label": "child-4-2",
+      "id": "child-4-2",
+      "parent": "child-4"
     }
   ],
   "links": [ // 上下级关系以外的额外连线
     {
       "source": "child-1-1",
-			"label": "special link",
+      "label": "special link",
       "target": "child-2"
     }
   ]
@@ -56,29 +81,42 @@
 
 ## 算法汇总
 
-### 经典布局 standard
+### 标准布局 standard
+
+![standard layout](mind-map-drawing-algorithms/standard.svg)
+
+### 右向分层布局 rightHierarchical
+
+![right hierarchical layout](mind-map-drawing-algorithms/right-hierarchical.svg)
+
+### 向下组织结构布局 downwardOrganizational
+
+![downward organizational layout](mind-map-drawing-algorithms/downward-organizational.svg)
+
+### 向下目录组织布局 downwardTreeOrganizational
+
+![downward tree organizational layout](mind-map-drawing-algorithms/downward-tree-organizational.svg)
+
+### 右向鱼骨布局 rightFishBone
+
+![right fish bone layout](mind-map-drawing-algorithms/right-fish-bone.svg)
+
+<!--
+### 向上组织结构布局 upwardOrganizational
+
+### 向下分层布局 downwardHierarchical
+
+### 左向鱼骨布局 leftFishBone
 
 ### 右向树布局 rightTree
 
 ### 左向树布局 leftTree
 
-### 右向鱼骨布局 rightFishBone
-
-### 左向鱼骨布局 leftFishBone
-
 ### 弧树布局 arcTree
 
 ### 肘树布局 elbowTree
 
-### 右向分层布局 rightHierarchical
-
-### 向下分层布局 downwardHierarchical
-
-### 组织结构布局 organizational
-
-### 向上组织结构布局 upwardOrganizational
-
 ### 水平时间轴 horizontalTimeline
 
 ### 垂直时间轴 verticalTimeline
-
+-->
