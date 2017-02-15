@@ -46,64 +46,55 @@
 <p>为了让整理思路的过程更流畅，市面上的思维导图软件一般采用自动布局，使用户不必关心图形布局也能画出比较优美的思维导图。而为了用相对较小的代价（需要实时交互，实时布局）实现自动布局，常见的思维导图软件处理的图数据格式都是树形数据。本文以经典思维导图软件XMind接受的数据格式为例，汇总常见的思维导图自动布局算法。</p>
 <h3>输入</h3>
 <pre><code class="language-javascript">{
-  <span class="hljs-string">"topics"</span>: [ <span class="hljs-comment">// 扁平化，用parent来表示思维导图节点上下级关系的数据结构</span>
-    {
-      <span class="hljs-string">"label"</span>: <span class="hljs-string">"root"</span>,
-      <span class="hljs-string">"id"</span>: <span class="hljs-string">"root"</span>
+    <span class="hljs-string">"root"</span>: {
+        <span class="hljs-string">"label"</span>: <span class="hljs-string">"root"</span>,
+        <span class="hljs-string">"children"</span>: [
+            {
+                <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-1"</span>,
+                <span class="hljs-string">"children"</span>: [
+                    {
+                        <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-1-1"</span>
+                    },
+                    {
+                        <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-1-2"</span>,
+                        <span class="hljs-string">"children"</span>: [
+                            {
+                                <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-1-2-1"</span>
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-2"</span>
+            },
+            {
+                <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-3"</span>
+            },
+            {
+                <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-4"</span>,
+                <span class="hljs-string">"children"</span>: [
+                    {
+                        <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-4-1"</span>
+                    },
+                    {
+                        <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-4-2"</span>
+                    }
+                ]
+            }
+        ]
     },
-    {
-      <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-1"</span>,
-      <span class="hljs-string">"id"</span>: <span class="hljs-string">"child-1"</span>,
-      <span class="hljs-string">"parent"</span>: <span class="hljs-string">"root"</span>
-    },
-    {
-      <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-2"</span>,
-      <span class="hljs-string">"id"</span>: <span class="hljs-string">"child-2"</span>,
-      <span class="hljs-string">"parent"</span>: <span class="hljs-string">"root"</span>
-    },
-    {
-      <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-3"</span>,
-      <span class="hljs-string">"id"</span>: <span class="hljs-string">"child-3"</span>,
-      <span class="hljs-string">"parent"</span>: <span class="hljs-string">"root"</span>
-    },
-    {
-      <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-4"</span>,
-      <span class="hljs-string">"id"</span>: <span class="hljs-string">"child-4"</span>,
-      <span class="hljs-string">"parent"</span>: <span class="hljs-string">"root"</span>
-    },
-    {
-      <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-1-1"</span>,
-      <span class="hljs-string">"id"</span>: <span class="hljs-string">"child-1-1"</span>,
-      <span class="hljs-string">"parent"</span>: <span class="hljs-string">"child-1"</span>
-    },
-    {
-      <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-1-2"</span>,
-      <span class="hljs-string">"id"</span>: <span class="hljs-string">"child-1-2"</span>,
-      <span class="hljs-string">"parent"</span>: <span class="hljs-string">"child-1"</span>
-    },
-    {
-      <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-1-2-1"</span>,
-      <span class="hljs-string">"id"</span>: <span class="hljs-string">"child-1-2-1"</span>,
-      <span class="hljs-string">"parent"</span>: <span class="hljs-string">"child-1-2"</span>
-    },
-    {
-      <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-4-1"</span>,
-      <span class="hljs-string">"id"</span>: <span class="hljs-string">"child-4-1"</span>,
-      <span class="hljs-string">"parent"</span>: <span class="hljs-string">"child-4"</span>
-    },
-    {
-      <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-4-2"</span>,
-      <span class="hljs-string">"id"</span>: <span class="hljs-string">"child-4-2"</span>,
-      <span class="hljs-string">"parent"</span>: <span class="hljs-string">"child-4"</span>
+    <span class="hljs-string">"links"</span>: [
+        {
+            <span class="hljs-string">"source"</span>: <span class="hljs-string">"child-1-1"</span>,
+            <span class="hljs-string">"label"</span>: <span class="hljs-string">"special link"</span>,
+            <span class="hljs-string">"target"</span>: <span class="hljs-string">"child-2"</span>
+        }
+    ],
+    <span class="hljs-string">"comments"</span>: {
+        <span class="hljs-string">"root"</span>: <span class="hljs-string">"思维导图的根节点话题"</span>,
+        <span class="hljs-string">"links"</span>: <span class="hljs-string">"思维导图节点间非继承关系的额外联系"</span>
     }
-  ],
-  <span class="hljs-string">"links"</span>: [ <span class="hljs-comment">// 上下级关系以外的额外连线</span>
-    {
-      <span class="hljs-string">"source"</span>: <span class="hljs-string">"child-1-1"</span>,
-      <span class="hljs-string">"label"</span>: <span class="hljs-string">"special link"</span>,
-      <span class="hljs-string">"target"</span>: <span class="hljs-string">"child-2"</span>
-    }
-  ]
 }
 </code></pre>
 <h3>输出</h3>
@@ -161,6 +152,10 @@
 
 ### 垂直时间轴 verticalTimeline
 -->
+<h2>相关链接</h2>
+<ul>
+<li>算法实现：<a href="https://github.com/leungwensen/mindmap-layouts">mindmap-layouts</a></li>
+</ul>
 </div>
 </article>
 <div id="loading">
