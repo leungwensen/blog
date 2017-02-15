@@ -85,9 +85,33 @@
 
 ![standard layout](mind-map-drawing-algorithms/standard.svg)
 
+#### 特点
+
+1. Root节点的子节点先左后右布局。左边子节点后续节点往左，右边子节点后续节点往右。
+2. Root节点的子节点围绕Root节点带向内的弧度紧凑布局。
+3. Root节点后两层以后的子节点和所在层子节点垂直对齐（右边节点左对齐，左边节点右对齐）。
+4. 布局时以Root节点为中心布局，布局完毕所有节点整体相对画布居中。
+
+#### 使用场景
+
+这种布局是经典的脑图布局，能比较直观地描绘发散的大脑思维，帮助人合并不同来源的资料，整理复杂的问题。
+
+#### 算法描述
+
+
+
 ### 右向分层布局 rightHierarchical
 
 ![right hierarchical layout](mind-map-drawing-algorithms/right-hierarchical.svg)
+
+#### 特点
+
+1. 从左往右布局各个层次的节点。
+2. 和经典的树图或者分层布局不同的地方在于，每个节点的位置只相对于父节点，和其他父节点不同的同层次节点位置不相关。
+
+#### 使用场景
+
+这种布局就是经典的树图层次结构布局，适合有明显分层的信息。譬如总结信息，族谱，目录结构和记录笔记等。
 
 ### 向下组织结构布局 downwardOrganizational
 
@@ -100,6 +124,10 @@
 ### 右向鱼骨布局 rightFishBone
 
 ![right fish bone layout](mind-map-drawing-algorithms/right-fish-bone.svg)
+
+### 缩进布局 indented
+
+![indented layout](mind-map-drawing-algorithms/indented.png)
 
 <!--
 ### 向上组织结构布局 upwardOrganizational
