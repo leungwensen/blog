@@ -9,64 +9,55 @@
 
 ```javascript
 {
-  "topics": [ // 扁平化，用parent来表示思维导图节点上下级关系的数据结构
-    {
-      "label": "root",
-      "id": "root"
+    "root": {
+        "label": "root",
+        "children": [
+            {
+                "label": "child-1",
+                "children": [
+                    {
+                        "label": "child-1-1"
+                    },
+                    {
+                        "label": "child-1-2",
+                        "children": [
+                            {
+                                "label": "child-1-2-1"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "label": "child-2"
+            },
+            {
+                "label": "child-3"
+            },
+            {
+                "label": "child-4",
+                "children": [
+                    {
+                        "label": "child-4-1"
+                    },
+                    {
+                        "label": "child-4-2"
+                    }
+                ]
+            }
+        ]
     },
-    {
-      "label": "child-1",
-      "id": "child-1",
-      "parent": "root"
-    },
-    {
-      "label": "child-2",
-      "id": "child-2",
-      "parent": "root"
-    },
-    {
-      "label": "child-3",
-      "id": "child-3",
-      "parent": "root"
-    },
-    {
-      "label": "child-4",
-      "id": "child-4",
-      "parent": "root"
-    },
-    {
-      "label": "child-1-1",
-      "id": "child-1-1",
-      "parent": "child-1"
-    },
-    {
-      "label": "child-1-2",
-      "id": "child-1-2",
-      "parent": "child-1"
-    },
-    {
-      "label": "child-1-2-1",
-      "id": "child-1-2-1",
-      "parent": "child-1-2"
-    },
-    {
-      "label": "child-4-1",
-      "id": "child-4-1",
-      "parent": "child-4"
-    },
-    {
-      "label": "child-4-2",
-      "id": "child-4-2",
-      "parent": "child-4"
+    "links": [
+        {
+            "source": "child-1-1",
+            "label": "special link",
+            "target": "child-2"
+        }
+    ],
+    "comments": {
+        "root": "思维导图的根节点话题",
+        "links": "思维导图节点间非继承关系的额外联系"
     }
-  ],
-  "links": [ // 上下级关系以外的额外连线
-    {
-      "source": "child-1-1",
-      "label": "special link",
-      "target": "child-2"
-    }
-  ]
 }
 ```
 
@@ -148,3 +139,8 @@
 
 ### 垂直时间轴 verticalTimeline
 -->
+
+## 相关链接
+
+- 算法实现：[mindmap-layouts](https://github.com/leungwensen/mindmap-layouts)
+
