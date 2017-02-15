@@ -43,7 +43,7 @@
   </nav>
   <div id="markdown-body" class="markdown-body"><h1>思维导图自动布局算法</h1>
 <h2>概述</h2>
-<p>为了让整理思路的过程更流畅，市面上的思维导图软件一般采用自动布局，使用户不必关心图形布局也能画出比较优美的思维导图。而为了用相对较小的代价（需要实时交互，实时布局）实现自动布局，常见的思维导图软件处理的图数据格式都是树形数据。本文以经典思维导图软件XMind接受的数据格式为例，汇总常见的思维导图自动布局算法。</p>
+<p>为了让整理思路的过程更流畅，市面上的思维导图软件一般采用自动布局，使用户不必关心图形布局也能画出比较优美的思维导图。而为了用相对较小的代价（需要实时交互，实时布局）实现自动布局，常见的思维导图软件处理的图数据格式都是树形数据（严格地说，是有序根树，即ordered rooted tree）。本文以经典思维导图软件XMind接受的数据格式为例，汇总常见的思维导图自动布局算法。</p>
 <h3>输入</h3>
 <pre><code class="language-javascript">{
     <span class="hljs-string">"root"</span>: {
@@ -90,13 +90,16 @@
             <span class="hljs-string">"label"</span>: <span class="hljs-string">"special link"</span>,
             <span class="hljs-string">"target"</span>: <span class="hljs-string">"child-2"</span>
         }
-    ],
-    <span class="hljs-string">"comments"</span>: {
-        <span class="hljs-string">"root"</span>: <span class="hljs-string">"思维导图的根节点话题"</span>,
-        <span class="hljs-string">"links"</span>: <span class="hljs-string">"思维导图节点间非继承关系的额外联系"</span>
-    }
+    ]
 }
 </code></pre>
+<blockquote>
+<p>root及其子孙是思维导图里的节点，对应XMind里的Topic</p>
+</blockquote>
+<blockquote>
+<p>links是思维导图节点间非继承关系的额外联系，对应XMind里的Relationship</p>
+</blockquote>
+<p>更多关于.xmind文件的结构可参见<a href="https://github.com/leungwensen/xmind-sdk-javascript">xmind-sdk-javascript</a></p>
 <h3>输出</h3>
 <pre><code class="language-javascript">{
 	<span class="hljs-string">"nodes"</span>: [], <span class="hljs-comment">// 带坐标信息的节点</span>
@@ -156,6 +159,15 @@
 <ul>
 <li>算法实现：<a href="https://github.com/leungwensen/mindmap-layouts">mindmap-layouts</a></li>
 </ul>
+<h2>附录</h2>
+<h3>树布局的美学标准</h3>
+<ol>
+<li>节点之间不重叠</li>
+<li>子节点按照指定的顺序排列</li>
+<li>父节点在子节点中心</li>
+<li>某棵子树的绘制不取决于其在树中的位置，同样的子树绘制结果应该一致</li>
+<li>树的反射的布局中，每个子节点顺序和原来布局相反</li>
+</ol>
 </div>
 </article>
 <div id="loading">
