@@ -8,7 +8,7 @@
 ### 2017
 
 * [[WIP]一种画有向图的技术(译文)](./2017/a-technique-for-drawing-directed-graphs.md)
-* [[WIP]思维导图自动布局算法](./2017/mind-map-drawing-algorithms.md)
+* [[WIP]思维导图自动布局算法](./2017/mindmap-drawing-algorithms.md)
 
 ### 2016
 
