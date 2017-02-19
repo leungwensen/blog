@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta http-equiv="Content-Type" name="viewport" content="width=device-width, initial-scale=1"/>
+<title>思维导图自动布局算法</title>
+<link rel="stylesheet" href="https://leungwensen.github.io/zfinder/dist/lib/normalize-4.2.0.min.css">
+
+  <link rel="stylesheet" href="https://leungwensen.github.io/zfinder/dist/lib/github-markdown-2.3.0.min.css">
+  <link rel="stylesheet" href="https://leungwensen.github.io/zfinder/dist/lib/katex-0.7.1/katex.min.css">
+  <link rel="stylesheet" href="https://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.css">
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+     style="width:0;height:0;position:absolute;overflow:hidden;">
+  <defs>
+    <symbol id="si-zfinder-collapse-left" viewBox="0 0 38 38">
+      <path d="M38 0H0v38h38V0zM3 35V3h32v32H3zM5 5v28h17V21h-9.667L16 26h-4l-5-7 5-7h4l-3.667 5H22V5H5z"/>
+    </symbol>
+    <symbol id="si-zfinder-expand-right" viewBox="0 0 38 38">
+      <path d="M0 0h38v38H0V0zm35 35V3H3v32h32zM22 5v28H5V21h9.667L11 26h4l5-7-5-7h-4l3.667 5H5V5h17z"/>
+    </symbol>
+    <symbol id="si-zfinder-fullscreen" viewBox="0 0 28 28">
+      <path d="M4 18H0v10h10v-4H4v-6zm-4-8h4V4h6V0H0v10zm24 14h-6v4h10V18h-4v6zM18 0v4h6v6h4V0H18z"/>
+    </symbol>
+    <symbol id="si-zfinder-fullscreen-exit" viewBox="0 0 28 28">
+      <path d="M0 22h6v6h4V18H0v4zM6 6H0v4h10V0H6v6zm12 22h4v-6h6v-4H18v10zm4-22V0h-4v10h10V6h-6z"/>
+    </symbol>
+  </defs>
+</svg>
+<nav id="toc">
+  <div id="toc-body" class="toc-body"></div>
+</nav>
+<article id="markdown">
+  <nav id="markdown-header" class="markdown-header">
+    <svg class="si" id="toggle-toc" width="24" height="24">
+      <use xlink:href="#si-zfinder-collapse-left"></use>
+    </svg>
+    <svg class="si float-right" id="toggle-fullscreen-article" width="24" height="24">
+      <use xlink:href="#si-zfinder-fullscreen"></use>
+    </svg>
+  </nav>
+  <div id="markdown-body" class="markdown-body"><h1>思维导图自动布局算法</h1>
+<h2>概述</h2>
+<p>为了让整理思路的过程更流畅，市面上的思维导图软件一般采用自动布局，使用户不必关心图形布局也能画出比较优美的思维导图。而为了用相对较小的代价（需要实时交互，实时布局）实现自动布局，常见的思维导图软件处理的图数据格式都是树形数据（严格地说，是有序根树，即ordered rooted tree）。本文以经典思维导图软件XMind接受的数据格式为例，汇总常见的思维导图自动布局算法。</p>
+<h3>输入</h3>
+<pre><code class="language-javascript">{
+    <span class="hljs-string">"root"</span>: {
+        <span class="hljs-string">"label"</span>: <span class="hljs-string">"root"</span>,
+        <span class="hljs-string">"children"</span>: [
+            {
+                <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-1"</span>,
+                <span class="hljs-string">"children"</span>: [
+                    {
+                        <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-1-1"</span>
+                    },
+                    {
+                        <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-1-2"</span>,
+                        <span class="hljs-string">"children"</span>: [
+                            {
+                                <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-1-2-1"</span>
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-2"</span>
+            },
+            {
+                <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-3"</span>
+            },
+            {
+                <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-4"</span>,
+                <span class="hljs-string">"children"</span>: [
+                    {
+                        <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-4-1"</span>
+                    },
+                    {
+                        <span class="hljs-string">"label"</span>: <span class="hljs-string">"child-4-2"</span>
+                    }
+                ]
+            }
+        ]
+    },
+    <span class="hljs-string">"links"</span>: [
+        {
+            <span class="hljs-string">"source"</span>: <span class="hljs-string">"child-1-1"</span>,
+            <span class="hljs-string">"label"</span>: <span class="hljs-string">"special link"</span>,
+            <span class="hljs-string">"target"</span>: <span class="hljs-string">"child-2"</span>
+        }
+    ]
+}
+</code></pre>
+<blockquote>
+<p>root及其子孙是思维导图里的节点，对应XMind里的Topic</p>
+</blockquote>
+<blockquote>
+<p>links是思维导图节点间非继承关系的额外联系，对应XMind里的Relationship</p>
+</blockquote>
+<p>更多关于.xmind文件的结构可参见<a href="https://github.com/leungwensen/xmind-sdk-javascript">xmind-sdk-javascript</a></p>
+<h3>输出</h3>
+<pre><code class="language-javascript">{
+	<span class="hljs-string">"nodes"</span>: [], <span class="hljs-comment">// 带坐标信息的节点</span>
+	<span class="hljs-string">"edges"</span>: [], <span class="hljs-comment">// 带起点终点坐标信息的边</span>
+}
+</code></pre>
+<h2>算法汇总</h2>
+<h3>标准布局 standard</h3>
+<figure><img src="mind-map-drawing-algorithms/standard.svg" alt="standard layout"></figure>
+<h4>特点</h4>
+<ol>
+<li>Root节点的子节点先左后右布局。左边子节点后续节点往左，右边子节点后续节点往右。</li>
+<li>Root节点的子节点围绕Root节点带向内的弧度紧凑布局。</li>
+<li>Root节点后两层以后的子节点和所在层子节点垂直对齐（右边节点左对齐，左边节点右对齐）。</li>
+<li>布局时以Root节点为中心布局，布局完毕所有节点整体相对画布居中。</li>
+</ol>
+<h4>使用场景</h4>
+<p>这种布局是经典的脑图布局，能比较直观地描绘发散的大脑思维，帮助人合并不同来源的资料，整理复杂的问题。</p>
+<h4>算法描述</h4>
+<h3>右向分层布局 rightHierarchical</h3>
+<figure><img src="mind-map-drawing-algorithms/right-hierarchical.svg" alt="right hierarchical layout"></figure>
+<h4>特点</h4>
+<ol>
+<li>从左往右布局各个层次的节点。</li>
+<li>和经典的树图或者分层布局不同的地方在于，每个节点的位置只相对于父节点，和其他父节点不同的同层次节点位置不相关。</li>
+</ol>
+<h4>使用场景</h4>
+<p>这种布局就是经典的树图层次结构布局，适合有明显分层的信息。譬如总结信息，族谱，目录结构和记录笔记等。</p>
+<h3>向下组织结构布局 downwardOrganizational</h3>
+<figure><img src="mind-map-drawing-algorithms/downward-organizational.svg" alt="downward organizational layout"></figure>
+<h3>向下目录组织布局 downwardTreeOrganizational</h3>
+<figure><img src="mind-map-drawing-algorithms/downward-tree-organizational.svg" alt="downward tree organizational layout"></figure>
+<h3>右向鱼骨布局 rightFishBone</h3>
+<figure><img src="mind-map-drawing-algorithms/right-fish-bone.svg" alt="right fish bone layout"></figure>
+<h3>缩进布局 indented</h3>
+<figure><img src="mind-map-drawing-algorithms/indented.png" alt="indented layout"></figure>
+<!--
+### 向上组织结构布局 upwardOrganizational
+
+### 向下分层布局 downwardHierarchical
+
+### 左向鱼骨布局 leftFishBone
+
+### 右向树布局 rightTree
+
+### 左向树布局 leftTree
+
+### 弧树布局 arcTree
+
+### 肘树布局 elbowTree
+
+### 水平时间轴 horizontalTimeline
+
+### 垂直时间轴 verticalTimeline
+-->
+<h2>相关链接</h2>
+<ul>
+<li>算法实现：<a href="https://github.com/leungwensen/mindmap-layouts">mindmap-layouts</a></li>
+</ul>
+<h2>附录</h2>
+<h3>树布局的美学标准</h3>
+<ol>
+<li>节点之间不重叠</li>
+<li>子节点按照指定的顺序排列</li>
+<li>父节点在子节点中心</li>
+<li>某棵子树的绘制不取决于其在树中的位置，同样的子树绘制结果应该一致</li>
+<li>树的反射的布局中，每个子节点顺序和原来布局相反</li>
+</ol>
+</div>
+</article>
+<div id="loading">
+  <div class="sk-double-bounce">
+    <div class="sk-child sk-double-bounce1"></div>
+    <div class="sk-child sk-double-bounce2"></div>
+  </div>
+</div>
+
+<script src="https://leungwensen.github.io/zfinder/dist/lib/jquery-3.1.0.min.js"></script>
+<script src="https://leungwensen.github.io/zfinder/dist/lib/screenfull-3.0.0.min.js"></script>
+<script src="https://leungwensen.github.io/zfinder/dist/zfinder/markdown-previewer.js"></script>
+</body>
+</html>
