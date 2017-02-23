@@ -91,30 +91,29 @@
 
 #### 算法描述
 
+### 右向逻辑布局 right logical
 
-
-### 右向分层布局 rightHierarchical
-
-![right hierarchical layout](mind-map-drawing-algorithms/right-hierarchical.svg)
+![right logical layout](mind-map-drawing-algorithms/right-logical.svg)
 
 #### 特点
 
 1. 从左往右布局各个层次的节点。
 2. 和经典的树图或者分层布局不同的地方在于，每个节点的位置只相对于父节点，和其他父节点不同的同层次节点位置不相关。
+3. 是所谓的"非分层紧凑树布局"。
 
 #### 使用场景
 
 这种布局就是经典的树图层次结构布局，适合有明显分层的信息。譬如总结信息，族谱，目录结构和记录笔记等。
 
-### 向下组织结构布局 downwardOrganizational
+### 向下组织结构布局 downward organizational
 
 ![downward organizational layout](mind-map-drawing-algorithms/downward-organizational.svg)
 
-### 向下目录组织布局 downwardTreeOrganizational
+### 向下目录组织布局 downward tree organizational
 
 ![downward tree organizational layout](mind-map-drawing-algorithms/downward-tree-organizational.svg)
 
-### 右向鱼骨布局 rightFishBone
+### 右向鱼骨布局 right fish bone
 
 ![right fish bone layout](mind-map-drawing-algorithms/right-fish-bone.svg)
 
@@ -123,23 +122,23 @@
 ![indented layout](mind-map-drawing-algorithms/indented.png)
 
 <!--
-### 向上组织结构布局 upwardOrganizational
+### 向上组织结构布局 upward organizational
 
-### 向下分层布局 downwardHierarchical
+### 向下逻辑布局 downward logical
 
-### 左向鱼骨布局 leftFishBone
+### 左向鱼骨布局 left fish bone
 
-### 右向树布局 rightTree
+### 右向树布局 right tree
 
-### 左向树布局 leftTree
+### 左向树布局 left tree
 
-### 弧树布局 arcTree
+### 弧树布局 arc tree
 
-### 肘树布局 elbowTree
+### 肘树布局 elbow tree
 
-### 水平时间轴 horizontalTimeline
+### 水平时间轴 horizontal Timeline
 
-### 垂直时间轴 verticalTimeline
+### 垂直时间轴 vertical Timeline
 -->
 
 ## 相关链接
