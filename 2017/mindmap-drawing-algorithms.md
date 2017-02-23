@@ -10,38 +10,38 @@
 ```javascript
 {
     "root": {
-        "label": "root",
+        "name": "root",
         "children": [
             {
-                "label": "child-1",
+                "name": "child-1",
                 "children": [
                     {
-                        "label": "child-1-1"
+                        "name": "child-1-1"
                     },
                     {
-                        "label": "child-1-2",
+                        "name": "child-1-2",
                         "children": [
                             {
-                                "label": "child-1-2-1"
+                                "name": "child-1-2-1"
                             }
                         ]
                     }
                 ]
             },
             {
-                "label": "child-2"
+                "name": "child-2"
             },
             {
-                "label": "child-3"
+                "name": "child-3"
             },
             {
-                "label": "child-4",
+                "name": "child-4",
                 "children": [
                     {
-                        "label": "child-4-1"
+                        "name": "child-4-1"
                     },
                     {
-                        "label": "child-4-2"
+                        "name": "child-4-2"
                     }
                 ]
             }
@@ -50,7 +50,7 @@
     "links": [
         {
             "source": "child-1-1",
-            "label": "special link",
+            "name": "special link",
             "target": "child-2"
         }
     ]
