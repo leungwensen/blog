@@ -7,7 +7,7 @@
 
 ### 2017
 
-* [[WIP]外行人说搜索引擎](./2017/a-brief-intro-to-search-engine.html)
+* [外行人说搜索引擎](./2017/a-brief-intro-to-search-engine.html)
 * [[WIP]一种画有向图的技术(译文)](./2017/a-technique-for-drawing-directed-graphs.md)
 * [[WIP]思维导图自动布局算法](./2017/mindmap-drawing-algorithms.md)
 
