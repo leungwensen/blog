@@ -1,0 +1,5 @@
+(function () {
+    // presentation
+    Reveal.initialize()
+})()
+

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>外行图说搜索引擎</title>
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js@3.4.1/css/reveal.css">
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js@3.4.1/css/theme/white.css">
+    <link rel="stylesheet" href="https://unpkg.com/vis@4.18.1/dist/vis-timeline-graph2d.min.css">
+    <style>
+        .canvas {
+            width: 100%;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+<div class="reveal">
+    <div class="slides">
+        <section>
+            <h1>外行人图说搜索引擎</h1>
+        </section>
+        <section>
+            <p>History of Search Engines</p>
+            <div id="timeline" class="canvas"></div>
+        </section>
+        <section>
+            <p>Search Engine Market share in March 2017</p>
+            <div class="canvas" id="market-share-2017"></div>
+        </section>
+        <section>
+            <p>Types of Search Queries</p>
+            <div class="canvas" id="types-of-search-queries"></div>
+            <small>Fall 2002, Andrei Broder</small>
+        </section>
+        <section>
+            <p>Parts of a Search Engine</p>
+            <img class="canvas" src="./a-brief-intro-to-search-engine/search-engine.svg">
+        </section>
+        <section>
+            <p>References</p>
+            <ul>
+                <li>
+                    <a href="http://www.searchenginehistory.com/" target="_blank">
+                        Search Engine History
+                    </a>
+                </li>
+                <li>
+                    <a href="https://support.google.com/webmasters/answer/70897?hl=en" target="_blank">
+                        How Google Search Works
+                    </a>
+                </li>
+                <li>
+                    <a href="https://en.wikipedia.org/wiki/Web_search_engine" target="_blank">
+                        Wikipedia: Web Search Engine
+                    </a>
+                </li>
+                <li>
+                    <a href="http://www.ituring.com.cn/book/1582" target="_blank">
+                        《自制搜索引擎》
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.cis.upenn.edu/~nenkova/Courses/cis430/p3-broder.pdf" target="_blank">
+                        A taxonomy of web search
+                    </a>
+                </li>
+            </ul>
+        </section>
+    </div>
+</div>
+<script src="https://unpkg.com/reveal.js@3.4.1/js/reveal.js"></script>
+<script src="https://unpkg.com/vis@4.18.1/dist/vis-timeline-graph2d.min.js"></script>
+<script src="https://a.alipayobjects.com/g/datavis/g2/2.2.5/g2.js"></script>
+<script src="./a-brief-intro-to-search-engine/reveal.js"></script>
+<script src="./a-brief-intro-to-search-engine/timeline.js"></script>
+<script src="./a-brief-intro-to-search-engine/market-share.js"></script>
+<script src="./a-brief-intro-to-search-engine/types-of-search-queries.js"></script>
+</body>
+</html>
