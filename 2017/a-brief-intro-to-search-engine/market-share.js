@@ -37,9 +37,9 @@
                 itemWrap: true,
                 formatter: (val) => {
                     for (let i = 0, len = data.length; i < len; i++) {
-                        const obj = data[i];
+                        const obj = data[i]
                         if (obj.name === val) {
-                            return `${val}: ${obj.value}%`;
+                            return `${val}: ${obj.value}%`
                         }
                     }
                 }
@@ -51,8 +51,8 @@
                 .position(Stat.summary.percent('value'))
                 .color('name')
                 .label('name*..percent', (name, percent) => {
-                    percent = `${(percent * 100).toFixed(2)}%`;
-                    return `${name} ${percent}`;
+                    percent = `${(percent * 100).toFixed(2)}%`
+                    return `${name} ${percent}`
                 })
 
             chart.render()

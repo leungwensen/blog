@@ -81,8 +81,8 @@
             chart.intervalStack().position(Stat.summary.percent('value'))
                 .color('type')
                 .label('type*..percent', (type, percent) => {
-                    percent = `${(percent * 100).toFixed(2)}%`;
-                    return `${type} ${percent}`;
+                    percent = `${(percent * 100).toFixed(2)}%`
+                    return `${type} ${percent}`
                 })
                 .style({
                     lineWidth: 1

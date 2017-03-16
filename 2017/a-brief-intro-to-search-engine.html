@@ -11,6 +11,16 @@
             width: 100%;
             height: 500px;
         }
+
+        .reveal table td, .reveal table th {
+            border-left: 1px solid;
+        }
+
+        .reveal table {
+            border-top: 1px solid;
+            border-right: 1px solid;
+            border-bottom: 1px solid;
+        }
     </style>
 </head>
 <body>
@@ -37,6 +47,130 @@
             <img class="canvas" src="./a-brief-intro-to-search-engine/search-engine.svg">
         </section>
         <section>
+            <section>
+                <h2>Index?</h2>
+            </section>
+            <section>
+                <ul>
+                    <li>Doc1: <b>I like search engines</b></li>
+                    <li>Doc2: <b>I search keywords in Google</b></li>
+                </ul>
+            </section>
+            <section>
+                <table>
+                    <tr>
+                        <td></td>
+                        <td>I</td>
+                        <td>like</td>
+                        <td>search</td>
+                        <td>engine</td>
+                        <td>keyword</td>
+                        <td>in</td>
+                        <td>Google</td>
+                    </tr>
+                    <tr>
+                        <td>Doc1</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Doc2</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                    </tr>
+                </table>
+            </section>
+            <section>
+                <table>
+                    <tr>
+                        <td></td>
+                        <td>Doc1</td>
+                        <td>Doc2</td>
+                    </tr>
+                    <tr>
+                        <td>engine</td>
+                        <td>1</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Google</td>
+                        <td>0</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>I</td>
+                        <td>1</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>in</td>
+                        <td>0</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>keyword</td>
+                        <td>0</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>like</td>
+                        <td>1</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>search</td>
+                        <td>1</td>
+                        <td>1</td>
+                    </tr>
+                </table>
+            </section>
+        </section>
+        <section>
+            <section>
+                <p>Actually, It's much more COMPLICATED</p>
+                <!--<div class="canvas" id="other-subjects"></div>-->
+                <img class="canvas" src="./a-brief-intro-to-search-engine/other-subjects.png">
+            </section>
+            <section>
+                <p>Word-sense Disambiguation</p>
+                <ul>
+                    <li>已／结婚／的／和／尚未／结婚／的／青年</li>
+                    <li>已／结婚／的／和尚／未／结婚／的／青年</li>
+                    <li>四是四十是十十四是十四四十是四十</li>
+                </ul>
+            </section>
+            <section>
+                <p>New Words Recognition</p>
+                <ul>
+                    <li>黄教主和Baby高呼闹太套</li>
+                </ul>
+            </section>
+        </section>
+        <section>
+            <section>
+                Real World Full-Text Search
+                <img class="canvas" src="./a-brief-intro-to-search-engine/dash.png">
+            </section>
+            <section>
+                Documents
+                <img class="canvas" src="./a-brief-intro-to-search-engine/dash-docset.png">
+            </section>
+            <section>
+                Indices
+                <img class="canvas" src="./a-brief-intro-to-search-engine/dash-index.png">
+            </section>
+        </section>
+        <section>
             <p>References</p>
             <ul>
                 <li>
@@ -55,13 +189,18 @@
                     </a>
                 </li>
                 <li>
+                    <a href="https://www.cis.upenn.edu/~nenkova/Courses/cis430/p3-broder.pdf" target="_blank">
+                        A taxonomy of web search
+                    </a>
+                </li>
+                <li>
                     <a href="http://www.ituring.com.cn/book/1582" target="_blank">
                         《自制搜索引擎》
                     </a>
                 </li>
                 <li>
-                    <a href="https://www.cis.upenn.edu/~nenkova/Courses/cis430/p3-broder.pdf" target="_blank">
-                        A taxonomy of web search
+                    <a href="http://www.matrix67.com/blog/archives/5044" target="_blank">
+                        互联网时代的社会语言学：基于SNS的文本数据挖掘
                     </a>
                 </li>
             </ul>
@@ -71,9 +210,11 @@
 <script src="https://unpkg.com/reveal.js@3.4.1/js/reveal.js"></script>
 <script src="https://unpkg.com/vis@4.18.1/dist/vis-timeline-graph2d.min.js"></script>
 <script src="https://a.alipayobjects.com/g/datavis/g2/2.2.5/g2.js"></script>
+<script src="https://a.alipayobjects.com/g/datavis/g-cloud/1.0.2/index.js"></script>
 <script src="./a-brief-intro-to-search-engine/reveal.js"></script>
 <script src="./a-brief-intro-to-search-engine/timeline.js"></script>
 <script src="./a-brief-intro-to-search-engine/market-share.js"></script>
 <script src="./a-brief-intro-to-search-engine/types-of-search-queries.js"></script>
+<!--<script src="./a-brief-intro-to-search-engine/other-subjects.js"></script>-->
 </body>
 </html>
