@@ -1360,6 +1360,30 @@ end
 <p>权重函数<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>ω</mi></mrow><annotation encoding="application/x-tex">\omega</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03588em;">ω</span></span></span></span>和最小长度函数<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>δ</mi></mrow><annotation encoding="application/x-tex">\delta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03785em;">δ</span></span></span></span>会把边集合E分别映射成非负有理数和非负整数集合。</p>
 <p>有不少方法可以在多项式时间内解决这个整数规划问题。其中一个是解决等效线性程序，然后把结果在多项式时间内转换成整数解。另一种办法是把最优层级分配问题转换成最小代价最大流问题或者网络流循环问题，这些问题都有多项式时间复杂度的算法（参见<sup class="footnote-ref"><a href="#fn13" id="fnref13">[13]</a></sup>及其索引）。因为约束矩阵完全是幺模的，这个问题应用网络单纯性算法可以在小于多项式时间复杂度内解决。相关技术更详尽的表述可以参考<sup class="footnote-ref"><a href="#fn14" id="fnref14">[14]</a></sup>。</p>
 <h3>2.3 网络单纯形</h3>
+<p>我们基于网络单纯形<sup class="footnote-ref"><a href="#fn15" id="fnref15">[15]</a></sup>提出解决问题的一个简单算法。这个算法暂时还没有被证明为多项式时间复杂度，不过在实际应用中，这个算法迭代较少，速度也很快。</p>
+<p>首先我们给出一些观测结果和定义。一个<em>可行</em>的层级分配必须使得所有的边<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>e</mi></mrow><annotation encoding="application/x-tex">e</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">e</span></span></span></span>满足<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>l</mi><mo>(</mo><mi>e</mi><mo>)</mo><mo>≥</mo><mi>δ</mi><mo>(</mo><mi>e</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">l(e) \geq \delta(e)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mopen">(</span><span class="mord mathit">e</span><span class="mclose">)</span><span class="mrel">≥</span><span class="mord mathit" style="margin-right:0.03785em;">δ</span><span class="mopen">(</span><span class="mord mathit">e</span><span class="mclose">)</span></span></span></span>。对于任意的层级分配，无论可行还是不可行，某条边的松弛度被定义为其长度和最小长度之间的差值。因此，对于某种层级分配方案，如果每条边的松弛度都为非负数，那么它是可行的。如果某条边的松弛度为0，那么它是紧凑的。</p>
+<p>图的生成树对应着一个层级分配，或者一组层级分配（生成树是底层无根无向图，不一定是有向的树）。选取一个起始节点，配置其层级后，就可以得到一个层级分配。之后，遍历已分配层级节点的相邻节点，根据连线方向分配层级，上游节点层级递减，下游节点层级递增。重复这个过程，直到所有节点都被分配好层级为止。如果最终得到一个可行的层级分配，则这个生成树可行。从结构上看，可行生成树的连线都是紧凑的。</p>
+<p>对给定的生成树，我们可以为树的每一条边按照如下规则指定一个切值。如果某条边被移除，那么树会被分成两个连通分量，尾分量包含边的尾节点，头分量包含边的头节点。切值为尾分量所有连向头分量的边，包括这条边本身的权重之和，减去头分量中连向尾分量的所有边的权重之和。</p>
+<p>一般情况下（不总是，因为存在退化的情况）负的切值意味着这条边需要尽可能地延长，以使得加权边长度之和尽可能小，最终令头分量到尾分量的边变得紧凑。这和用紧凑边替代生成树中的边从而得到新的可行生成树的做法吻合。显然地，一种最优层级分配方案可以通过可行生成树推导出另一种最优层级分配方案。相对于纯代数范畴而言，在图形领域解决层级分配问题，这些观测是关键。把负切值的树边替换成恰当的非树边，直到所有树边都拥有非负切值为止。为确保这个过程能终止，实现方案理论上应该引入反循环技术，不过笔者实践过程中没有遇到过这个需求。最终得到的生成树可以推导出一个最优层级分配。关于网络单纯形终止问题和结果优化相关的文献可以参见<sup class="footnote-ref"><a href="#fn15" id="fnref15:1">[15:1]</a></sup> <sup class="footnote-ref"><a href="#fn16" id="fnref16">[16]</a></sup> <sup class="footnote-ref"><a href="#fn14" id="fnref14:1">[14:1]</a></sup>。</p>
+<p>下图描述了论文中的网络单纯形算法。</p>
+<p>图2-1. 网络单纯形</p>
+<pre><code>1. procedure rank()
+2.     feasible_tree();
+3.     while (e = leave_edge()) != nil do
+4.         f = enter_edge(e);
+5.         exchange(e, f);
+6.     end
+7.     normalize();
+8.     balance();
+9. end
+</code></pre>
+<p>图2-1.中的关注点</p>
+<p>2: 函数<code>feasible_tree</code>生成了一个初始化的可行生成树。其具体流程如下所述。网络单纯形算法有一个可行方案开始，并且始终产生可行方案。
+3: <code>leave_edge</code>返回一个切值为负的树边，如果没有，则返回nil，后者意味着已经是最优方案。所有负切值的边都会被选中并移除。
+4: <code>enter_edge</code>会搜寻一条非树边替代边<code>e</code>。替代过程是先移除边<code>e</code>，这样树会被分为头分量和尾分量。程序会从所有从头分量连向尾分量的边挑选出最紧凑的一条。要保持可行，这一步是必不可少的。
+5: 交换边，更新树和边的切值。
+7: 最终方案通过把最低层级设置为0进行规范化。
+8: 输入和输出边的权重相等，并且有几个不同的可行层级时，把它分配到节点最少的可行层级上。这一步的目的是遵从标准A4，降低拥挤程度，提高图的纵横比。这一步调整并不影响层级分配的效率。基于贪心策略的节点调整效率足够好。全局的层级均衡策略会在接下来的论文中讨论<sup class="footnote-ref"><a href="#fn14" id="fnref14:2">[14:2]</a></sup>。</p>
 <h3>2.4 实现细节</h3>
 <h2>3. 层级内顶点排序</h2>
 <h2>4. 节点坐标</h2>
@@ -1462,7 +1486,10 @@ X和Y坐标计算分两步进行。第一步是根据已经计算好的排序顺
 </li>
 <li id="fn13" class="footnote-item"><p>Goldberg, A. V. and R. E. Tarjan, ‘‘Finding minimum-cost circulations by successive approximation,’’ Mathematics of Operations Research, 15(3), 1990, pp. 430-466. <a href="#fnref13" class="footnote-backref">↩︎</a></p>
 </li>
-<li id="fn14" class="footnote-item"><p>Gansner, E. R., S. C. North and K.-P. Vo, ‘‘On the Rank Assignment Problem,’’ to be submitted. <a href="#fnref14" class="footnote-backref">↩︎</a></p>
+<li id="fn14" class="footnote-item"><p>Gansner, E. R., S. C. North and K.-P. Vo, ‘‘On the Rank Assignment Problem,’’ to be submitted. <a href="#fnref14" class="footnote-backref">↩︎</a> <a href="#fnref14:1" class="footnote-backref">↩︎</a> <a href="#fnref14:2" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn15" class="footnote-item"> <a href="#fnref15" class="footnote-backref">↩︎</a> <a href="#fnref15:1" class="footnote-backref">↩︎</a></li>
+<li id="fn16" class="footnote-item"><p>Cunningham, W. H., ‘‘A network simplex method,’’ Mathematical Programming 11, 1976, pp. 5-116. <a href="#fnref16" class="footnote-backref">↩︎</a></p>
 </li>
 </ol>
 </section>
