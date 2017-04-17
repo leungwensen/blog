@@ -90,8 +90,24 @@ AT&amp;T Bell Laboratories Murray Hill, New Jersey 07974
 <td>边</td>
 </tr>
 <tr>
+<td>flat edge</td>
+<td>平坦边</td>
+</tr>
+<tr>
 <td>forward edge</td>
 <td>前向边</td>
+</tr>
+<tr>
+<td>head component</td>
+<td>头分量</td>
+</tr>
+<tr>
+<td>in-edge</td>
+<td>内向边</td>
+</tr>
+<tr>
+<td>multi-edges</td>
+<td>重复边</td>
 </tr>
 <tr>
 <td>node</td>
@@ -100,6 +116,10 @@ AT&amp;T Bell Laboratories Murray Hill, New Jersey 07974
 <tr>
 <td>non-tree edge</td>
 <td>非树形边</td>
+</tr>
+<tr>
+<td>out-edge</td>
+<td>外向边</td>
 </tr>
 <tr>
 <td>rank</td>
@@ -114,10 +134,6 @@ AT&amp;T Bell Laboratories Murray Hill, New Jersey 07974
 <td>自连边</td>
 </tr>
 <tr>
-<td>multi-edges</td>
-<td>重复边</td>
-</tr>
-<tr>
 <td>slack</td>
 <td>松弛度</td>
 </tr>
@@ -126,20 +142,16 @@ AT&amp;T Bell Laboratories Murray Hill, New Jersey 07974
 <td>样条</td>
 </tr>
 <tr>
+<td>tail component</td>
+<td>尾分量</td>
+</tr>
+<tr>
 <td>tree edge</td>
 <td>树形边</td>
 </tr>
 <tr>
 <td>vertex</td>
 <td>顶点</td>
-</tr>
-<tr>
-<td>head component</td>
-<td>头分量</td>
-</tr>
-<tr>
-<td>tail component</td>
-<td>尾分量</td>
 </tr>
 </tbody>
 </table>
@@ -1473,6 +1485,64 @@ C_{(w, x)} &amp; = \omega(w, x) + G - H + A - B + L - K \\
 <p>图3-1中的关注点</p>
 <p>2: <code>init_order</code>初始化每个层级中的节点排序。这一步可以从最小层级的顶点开始，通过深度优先或者广度优先遍历来完成。遍历过程中，顶点通过由左往右的顺序来指定位置。这个策略保证了树图的初始化排序是没有边交叉的。这个策略很重要，因为树图产生的边交叉明显是可以避免的“失误”。</p>
 <p>4-9: <code>Max_iterations</code>是最大迭代次数。我们设置这个常量为24。在每次迭代中，如果边交叉减少了，新的排序方案会被保存。在实际实现时，有人可能倾向采用自适应的策略，即只要过去几次迭代优化了几个百分点时，就继续迭代。<code>wmedian</code>通过启发式加权中位数法重新排序各层的节点。<code>transpose</code>会在能减少边交叉的时候交换同一层的两个相邻顶点。这些函数接下来会进一步论述。</p>
+<p>图3-2展示了启发式的加权中位数算法。根据当前迭代次数的奇偶检验，各层级根据从上到下或者从下到上的顺序遍历。为简化例子，图3-2只展示了一个遍历方向的细节。</p>
+<p>图3-2. 启发式加权中位数算法</p>
+<pre><code> 1. procedure wmedian(order,iter)
+ 2.     if iter mod 2 == 0 then
+ 3.         for r = 1 to Max_rank do
+ 4.             for v in order[r] do
+ 5.                 median[v] = median_value(v,r-1);
+ 6.             sort(order[r],median);
+ 7.         end
+ 8.     else ...
+ 9.     endif
+10. end
+11. procedure median_value(v,adj_rank)
+12.     P = adj_position(v,adj_rank);
+13.     m=P/2;
+14.     if  P = 0 then
+15.         return -1.0;
+16.     elseif  P mod 2 == 1 then
+17.         return P[m];
+18.     elseif  P = 2 then
+19.         return (P[0] + P[1])/2;
+20.     else
+21.        left = P[m-1] - P[0];
+22.         right = P[ P -1] - P[m];
+23.         return (P[m-1]*right + P[m]*left)/(left+right);
+24.     endif
+25.  end
+</code></pre>
+<p>图3-2中的关注点</p>
+<p>1-10: 在前序遍历里，主循环从第1层开始遍历到最大层级。在每一层，每个顶点都会根据上一层级相邻顶点分配一个中位数。之后层级内的顶点会按照分配的中位数进行排序。一个重要的考量是如何处理和上一层级没有相邻顶点的顶点。在我们的实现里，这样的节点会被固化到它们原本的位置上，其它节点排序后分配到剩下的位置上。</p>
+<p>12-26: 如果关联顶点的中位数只有一个，那么顶点的中位数就是这个值。否则就会被定义成根据紧凑程度定义为两个中位数的内插值。通常会采用更偏向紧凑顶点排布的一侧。</p>
+<p>13: <code>adj_position</code>函数返回顶点v相邻层级的相邻顶点的有序位置序列。</p>
+<p>15-16: 没有相邻顶点的节点中位数值被设置为-1。这是为了给排序函数标记，让这些节点维持原来位置。</p>
+<p>图3-3展示了启发式的换位算法</p>
+<p>图3-3. 减少边交叉的启发式换位算法</p>
+<pre><code> 1. procedure transpose(rank)
+ 2.     improved=True;
+ 3.     while improved do
+ 4.         improved=False;
+ 5.         for r = 0 to Max_rank do
+ 6.             for i = 0 to rank[r]-2 do
+ 7.                 v = rank[r][i];
+ 8.                 w = rank[r][i+1];
+ 9.                 if crossing(v,w) &gt; crossing(w,v) then
+10.                     improved=True;
+11.                     exchange(rank[r][i],rank[r][i+1]);
+12.                 endif
+13.             end
+14.         end
+15.     end
+16. end
+</code></pre>
+<p>图3-3中的关注点</p>
+<p>3-15: 这是主循环，只要边交叉会减少，就会继续迭代下去。在排序函数的循环里，有一个自适应的策略会在边交叉减少量小到一定程度时结束循环。</p>
+<p>7-12: 检测每一对相邻顶点。如果交换两顶点会使得边交叉数减少，则交换顶点。函数<code>crossing(v, w)</code>计算同一层级内，相邻的两个节点v与w（v在w左侧）的边交叉数。</p>
+<p>有一个小的点是，原始图有可能存在同一层级节点之间的连线。我们称之为“平坦边”。根据A1原则，我们尝试把这些平坦边设置为同一方向。如果层级是由上而下排列的，那么平坦边通常会由左而右指向。这会给我们的顶点排序算法带来一些细微的变动。如果存在平坦边，那平坦边连接的顶点会在顶点排序时作为一个闭包。最终的顶点顺序必须包含这个排序的闭包。具体而言，闭包内两个顶点的初始顺序不能比改变，<code>transpose</code>和<code>sort</code>函数不能经过交换节点顺序破坏这个闭包内的排序。</p>
+<p>当根据中位数排序节点或者交换相邻节点时，对比中位数值或者边交叉数会存在等值的情况。我们发现在每次前序或者后序遍历中排序或者交换等值的节点有助于遵从A4标准。</p>
+<p>最后一点是通常运行两次顶点排序算法是值得的。第一次从最小层级开始遍历外向边，第二次是从最大层级开始，遍历内向边。这样可以从两种方案中找出更优的一种。</p>
 <h2>4. 节点坐标</h2>
 <p>第三部是计算节点坐标。之前的论文把计算节点坐标作为计算质心或者中心的后置步骤，为了布局的美观做一些局部的调整。我们将节点的位置作为一个独立的明确的问题，但是要为了更好的布局和未来的扩展性让步，例如顶点的排序是用拓扑算法还是几何算法。
 X和Y坐标计算分两步进行。第一步是根据已经计算好的排序顺序，给所有节点分配X坐标(包括虚拟节点)。第二步是根据同样的排序顺序分配Y坐标。Y坐标的分配必须在节点的盒模型外维持最小的间隔<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><mi>a</mi><mi>n</mi><mi>k</mi><mi>s</mi><mi>e</mi><mi>p</mi><mo>(</mo><mi>G</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">ranksep(G)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mord mathit">a</span><span class="mord mathit">n</span><span class="mord mathit" style="margin-right:0.03148em;">k</span><span class="mord mathit">s</span><span class="mord mathit">e</span><span class="mord mathit">p</span><span class="mopen">(</span><span class="mord mathit">G</span><span class="mclose">)</span></span></span></span>。当然，也可以调大邻近节点的间隔，增加邻近边的斜率，让整个图更具可读性。因为Y坐标的步骤很明确，所以这一小节的剩余部分会介绍如何计算X坐标。
