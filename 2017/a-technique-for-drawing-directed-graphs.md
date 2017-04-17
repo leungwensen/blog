@@ -115,23 +115,7 @@ end
 
 > 图1-2a. (Sun-4/28机器上渲染用时1.11秒)
 
-```viz-dot
-digraph world_dynamics {
-    size="6,6";
-    S8 -> 9; S24 -> 27; S24 -> 25; S1 -> 10; S1 -> 2; S35 -> 36;
-    S35 -> 43; S30 -> 31; S30 -> 33; 9 -> 42; 9 -> T1; 25 -> T1;
-    25 -> 26; 27 -> T24; 2 -> 3; 2 -> 16; 2 -> 17; 2 -> T1; 2 -> 18;
-    10 -> 11; 10 -> 14; 10 -> T1; 10 -> 13; 10 -> 12;
-    31 -> T1; 31 -> 32; 33 -> T30; 33 -> 34; 42 -> 4; 26 -> 4;
-    3 -> 4; 16 -> 15; 17 -> 19; 18 -> 29; 11 -> 4; 14 -> 15;
-    37 -> 39; 37 -> 41; 37 -> 38; 37 -> 40; 13 -> 19; 12 -> 29;
-    43 -> 38; 43 -> 40; 36 -> 19; 32 -> 23; 34 -> 29; 39 -> 15;
-    41 -> 29; 38 -> 4; 40 -> 19; 4 -> 5; 19 -> 21; 19 -> 20;
-    19 -> 28; 5 -> 6; 5 -> T35; 5 -> 23; 21 -> 22; 20 -> 15; 28 -> 29;
-    6 -> 7; 15 -> T1; 22 -> 23; 22 -> T35; 29 -> T30; 7 -> T8;
-    23 -> T24; 23 -> T1;
-}
-```
+![figure-1-2a](./a-technique-for-drawing-directed-graphs/figure-1-2a.png)
 
 > 图1-2b. 图文件
 
@@ -155,37 +139,9 @@ digraph world_dynamics {
 
 > 图1-3a. (Sun-4/28机器上渲染用时0.5秒)
 
-```viz-dot
-digraph shells {
-    size="7,8";
-    node [fontsize=24, shape = plaintext];
-    1972 -> 1976 -> 1978 -> 1980 -> 1982 -> 1984 -> 1986 -> 1988
-        -> 1990 -> future;
-    node [fontsize=20, shape = box];
-    { rank = same;  1976 Mashey Bourne; }
-    { rank = same;  1978 Formshell csh; }
-    { rank = same;  1980 esh vsh; }
-    { rank = same;  1982 ksh "System-V"; }
-    { rank = same;  1984 v9sh tcsh; }
-    { rank = same;  1986 "ksh-i"; }
-    { rank = same;  1988 KornShell Perl rc; }
-    { rank = same;  1990 tcl Bash; }
-    { rank = same;  "future" POSIX "ksh-POSIX"; }
-    Thompson -> {Mashey Bourne csh}; csh -> tcsh;
-    Bourne -> {ksh esh vsh "System-V" v9sh}; v9sh -> rc;
-           {Bourne "ksh-i" KornShell} -> Bash;
-    {esh vsh Formshell csh} -> ksh;
-    {KornShell "System-V"} -> POSIX;
-    ksh -> "ksh-i" -> KornShell -> "ksh-POSIX";
-    Bourne -> Formshell;
-    /* ’invisible’ edges to adjust node placement */
-    edge [style=invis];
-    1984 -> v9sh -> tcsh ; 1988 -> rc -> KornShell;
-    Formshell -> csh; KornShell -> Perl;
-}
-```
+![figure-1-3a](./a-technique-for-drawing-directed-graphs/figure-1-3a.png)
 
-> 图1-2b. 图文件
+> 图1-3b. 图文件
 
 ```
 digraph shells {
@@ -317,7 +273,7 @@ $$
 
 10: `init_cutvalues`函数计算树边的切值。对每一条树边，计算切值时把节点分为头分量和尾分量，然后计算所有头和尾分别在不同分量内的边权重之和，其中，从头分量连向尾分量的边的权重设置为负值。
 
-图2-3. 找到最优可行树
+> 图2-3. 找到最优可行树
 
 ![fiture-2-3](./a-technique-for-drawing-directed-graphs/figure-2-3.png)
 
@@ -355,13 +311,13 @@ $$
 
 最终的计算表达式仅仅涉及局部的边信息和已知边的切值。因此通过逐步计算切值，我们能保证每条边仅仅会被扫描两次，从而大幅度降低了计算出时切值的时间。
 
-图2-4. 逐步计算切值
+> 图2-4. 逐步计算切值
 
 ![fiture-2-4](./a-technique-for-drawing-directed-graphs/figure-2-4.png)
 
 另一个有价值的优化是[^Ch]中描述过的技术，从某个固定根节点$v_{root}$开始执行后序遍历，并且对每个节点v，用$lim(v)$表示其后序遍历数，用$low(v)$表示其子孙节点中的最小后序遍历数，用$parent(v)$表示每个节点的父节点后序遍历数（见图2-5）。
 
-图2-5. 后序遍历，节点上的标签为$(low, lim)$
+> 图2-5. 后序遍历，节点上的标签为$(low, lim)$
 
 ![fiture-2-5](./a-technique-for-drawing-directed-graphs/figure-2-5.png)
 
