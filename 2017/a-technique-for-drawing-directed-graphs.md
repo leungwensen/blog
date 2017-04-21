@@ -24,6 +24,7 @@ AT&T Bell Laboratories Murray Hill, New Jersey 07974
 | backward edge | 后向边 |
 | bounding box | 包围盒 |
 | component | 组件 |
+| convex hulls | 凸包 |
 | cross edge | 交叉边 |
 | cut value | 切值 |
 | depth-first search | 深度优先搜索 |
@@ -44,10 +45,9 @@ AT&T Bell Laboratories Murray Hill, New Jersey 07974
 | slack | 松弛度 |
 | spline routing algorithm | 样条路由算法 |
 | spline | 样条 |
+| tangent vector | 切向量 |
 | tree edge | 树形边 |
 | vertex | 顶点 |
-| convex hulls | 凸包 |
-| tangent vector | 切向量 |
 
 
 ### 相关链接
