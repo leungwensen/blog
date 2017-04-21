@@ -723,7 +723,7 @@ $$
 
 > （Sun-4/280上用时0.15秒）
 
-![Figure 5-1](./a-technique-for-drawing-directed-graphs/figure-5-1.png)
+![Figure 5-5](./a-technique-for-drawing-directed-graphs/figure-5-5.png)
 
 ## 6. 总结
 
