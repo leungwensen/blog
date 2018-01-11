@@ -477,13 +477,14 @@ $\Omega(e)$是一个与输入的边权重$\omega(e)$不同的内部值，用于�
 4.      for i = 0 to Max_iterations do
 5.      medianpos(i,xcoord);
 6.      minedge(i,xcoord);
-7.      minpath(i,xcoord);
-8.      packcut(i,xcoord);
-9.      if xlength(xcoord) < xlength(xbest) then
-10.         xbest = xcoord;
-11.     end
-12.     return xbest;
-13. end
+7.      minnode(i,xcoord);
+8.      minpath(i,xcoord);
+9.      packcut(i,xcoord);
+10.      if xlength(xcoord) < xlength(xbest) then
+11.         xbest = xcoord;
+12.     end
+13.     return xbest;
+14. end
 ```
 
 2: 按照如下方式计算初始坐标集。对于每一个排序值，给最左边的节点分配坐标0。给其余每一个节点分配的坐标与前一个节点之间只满足最小间隔。因此，每个相同排序值的节点初始时都尽量靠左。
